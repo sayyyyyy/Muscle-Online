@@ -1,6 +1,7 @@
-from flask import Flask
-from models import db
+from flask import Flask, redirect
+from models import db, User
 from flask_migrate import Migrate
+import hashlib
 
 def create_app():
     app = Flask(__name__)

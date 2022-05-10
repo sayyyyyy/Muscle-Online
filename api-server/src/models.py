@@ -28,6 +28,7 @@ class User(db.Model, UserMixin):
     def get_id(self):
         return (self.user_id)
 
+
 class UserSchema(ma.Schema):
     class Meta:
         fields = ('user_id', 'name', 'password', 'email', 'is_change_password')
