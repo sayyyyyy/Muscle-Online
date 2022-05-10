@@ -3,12 +3,16 @@ from datetime import datetime
 from flask_marshmallow import Marshmallow
 from flask_login import UserMixin
 
+
 db = SQLAlchemy()
 ma = Marshmallow()
 
 class User(db.Model, UserMixin):
+    
+    # テーブル名
     __tablename__ = 'users'
 
+    # カラム
     user_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     password = db.Column(db.String(255), nullable=False)
@@ -16,8 +20,7 @@ class User(db.Model, UserMixin):
     is_change_password = db.Column(db.Boolean, default=False)
 
 
-
-    to_rooms = db.relationship('User_Room', backref='users', lazy=True)
+    # 外部キー制約
     to_matches = db.relationship('Match', backref='users', lazy=True)
     to_user_data = db.relationship('User_Data', backref='users', lazy=True)
     to_rankings = db.relationship('Ranking', backref='users', lazy=True)
@@ -25,17 +28,10 @@ class User(db.Model, UserMixin):
     def get_id(self):
         return (self.user_id)
 
-
 class UserSchema(ma.Schema):
     class Meta:
         fields = ('user_id', 'name', 'password', 'email', 'is_change_password')
 
-class User_Room(db.Model):
-    __tablename__ = 'users_rooms'
-
-    user_room_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    room_id = db.Column(db.Integer, db.ForeignKey('rooms.room_id'), nullable=False)
 
 class Room(db.Model):
     __tablename__ = 'rooms'
@@ -49,30 +45,51 @@ class Room(db.Model):
 
 class RoomSchema(ma.Schema):
     class Meta:
-        fields = ('room_id', 'user1_id', 'user2_id', 'room_name', 'is_open', 'user')
-    user = ma.Nested(UserSchema, many=False)
+        fields = ('room_id', 'room_name', 'is_open')
 
-class Match(db.Model):
-    __tablename__ = 'matches'
 
-    match_id = db.Column(db.Integer, primary_key=True)
-    game_info_id = db.Column(db.Integer, db.ForeignKey('gameinformations.game_info_id'), nullable=False)
-    room_id = db.Column(db.Integer, db.ForeignKey('rooms.room_id'), nullable=False)
-    user1_count = db.Column(db.Integer)
-    user2_count = db.Column(db.Integer)
-    winner_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    is_finish = db.Column(db.Boolean, default=False)
-    finish_time = db.Column(db.DateTime)
+class User_Room(db.Model):
+    __tablename__ = 'users_rooms'
 
-class User_Data(db.Model):
-    __tablename__ = 'user_data'
-
-    user_data_id = db.Column(db.Integer, primary_key=True)
+    user_room_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    game_info_id = db.Column(db.Integer, db.ForeignKey('gameinformations.game_info_id'), nullable=False)
-    num_of_match = db.Column(db.Integer, default=0)
-    num_of_win = db.Column(db.Integer, default=0)
-    num_of_lose = db.Column(db.Integer, default=0)
+    room_id = db.Column(db.Integer, db.ForeignKey('rooms.room_id'), nullable=False)
+
+class User_RoomSchema(ma.Schema):
+    class Meta:
+        fields = ('user_room_id', 'user_id', 'room_id', 'user', 'room')
+    user = ma.Nested(UserSchema, many=False)
+    room = ma.Nested(RoomSchema, many=False)
+
+
+class GameFormat(db.Model):
+    __tablename__ = 'gameformats'
+
+    game_format_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.String(255), nullable=False)
+
+    to_gameinfo = db.relationship('GameInformation', backref='gameformats', lazy=True)
+
+class GameFormatSchema(ma.Schema):
+    class Meta:
+        fields = ('game_format_id', 'name', 'description')
+
+
+class Game(db.Model):
+    __tablename__ = 'games'
+
+    game_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.String(255), nullable=False)
+
+    to_gameinfo = db.relationship('GameInformation', backref='games', lazy=True)
+    to_rankinginfo = db.relationship('RankingInformation', backref='games', lazy=True)
+
+class GameSchema(ma.Schema):
+    class Meta:
+        fields = ('game_id', 'name', 'description')
+
 
 class GameInformation(db.Model):
     __tablename__ = 'gameinformations'
@@ -86,25 +103,49 @@ class GameInformation(db.Model):
     to_match = db.relationship('Match', backref='gameinformations', lazy=True)
     to_user_data = db.relationship('User_Data', backref='gameinformations', lazy=True)
 
-class GameFormat(db.Model):
-    __tablename__ = 'gameformats'
-
-    game_format_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.String(255), nullable=False)
-
-    to_gameinfo = db.relationship('GameInformation', backref='gameformats', lazy=True)
+class GameInformationSchema(ma.Schema):
+    class Meta:
+        fields = ('game_info_id', 'game_id', 'game_format_id', 'game_rule', 'game_info', 'game', 'gameformat')
+    game = ma.Nested(GameSchema, many=False)
+    gameformat = ma.Nested(GameFormatSchema, many=False)
 
 
-class Game(db.Model):
-    __tablename__ = 'games'
 
-    game_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.String(255), nullable=False)
+class Match(db.Model):
+    __tablename__ = 'matches'
 
-    to_gameinfo = db.relationship('GameInformation', backref='games', lazy=True)
-    to_rankinginfo = db.relationship('RankingInformation', backref='games', lazy=True)
+    match_id = db.Column(db.Integer, primary_key=True)
+    game_info_id = db.Column(db.Integer, db.ForeignKey('gameinformations.game_info_id'), nullable=False)
+    room_id = db.Column(db.Integer, db.ForeignKey('rooms.room_id'), nullable=False)
+    user1_count = db.Column(db.Integer)
+    user2_count = db.Column(db.Integer)
+    winner_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    is_finish = db.Column(db.Boolean, default=False)
+    finish_time = db.Column(db.DateTime)
+
+class MatchSchema(ma.Schema):
+    class Meta:
+        fields = ('match_id', 'game_info_id', 'room_id', 'user1_count', 'user2_count', 'winner_id', 'is_finish', 'finish_time', 'gameinfo', 'room', 'user')
+    game_info = ma.Nested(GameInformationSchema, many=False)
+    room = ma.Nested(RoomSchema, many=False)
+    user = ma.Nested(UserSchema, many=False)
+
+class User_Data(db.Model):
+    __tablename__ = 'user_data'
+
+    user_data_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    game_info_id = db.Column(db.Integer, db.ForeignKey('gameinformations.game_info_id'), nullable=False)
+    num_of_match = db.Column(db.Integer, default=0)
+    num_of_win = db.Column(db.Integer, default=0)
+    num_of_lose = db.Column(db.Integer, default=0)
+
+class User_DataSchema(ma.Schema):
+    class Meta:
+        fields = ('user_data_id', 'user_id', 'game_info_id', 'num_of_match', 'num_of_win', 'num_of_lose', 'user', 'gameinfo')
+    user = ma.Nested(UserSchema, many=False)
+    gameinfo = ma.Nested(GameInformationSchema, many=False)
+
 
 class RankingInformation(db.Model):
     __tablename__ = 'rankinginformations'
@@ -116,6 +157,10 @@ class RankingInformation(db.Model):
 
     to_ranking = db.relationship('Ranking', backref='rankinginformations', lazy=True)
 
+class RankingInformationSchema(ma.Schema):
+    class Meta:
+        fields = ('ranking_info_id', 'game_id', 'name', 'description', 'game')
+    game = ma.Nested(GameSchema, many=False)
 
 class Ranking(db.Model):
     __tablename__ = 'rankings'
@@ -124,3 +169,9 @@ class Ranking(db.Model):
     ranking_info_id = db.Column(db.Integer, db.ForeignKey('rankinginformations.ranking_info_id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     rate = db.Column(db.Integer, nullable=False)
+
+class RankingSchema(ma.Schema):
+    class Meta:
+        fields = ('ranking_id', 'ranking_info_id', 'user_id', 'rate', 'rankinginfo', 'user')
+    rankinginfo = ma.Nested(RankingInformationSchema, many=False)
+    user = ma.Nested(UserSchema, many=False)
