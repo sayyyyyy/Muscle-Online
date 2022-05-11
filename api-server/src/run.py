@@ -45,7 +45,7 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
 
-        add_user = User.query.filter_by(name=name, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
+        add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
 
         if not add_user:
             print('追加に失敗しました')
@@ -76,7 +76,7 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
 
-        add_user = User.query.filter_by(name=name, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
+        add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
 
         if not add_user:
             print('追加に失敗しました')
@@ -86,6 +86,43 @@ def signup():
         flask_login.login_user(new_user)
 
         return redirect('main')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == "POST":
+        # email = request.form.get('email')
+        # password = request.form.get('password')
+
+        email = 'test@a.a'
+        password = 'password'
+
+        user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
+
+        if not user:
+            return 'ユーザ名もしくはパスワードが異なります'
+            # return redirect('/login')
+
+        flask_login.login_user(user)
+
+        return redirect('/main')
+    else:
+        email = 'test@a.a'
+        password = 'password'
+
+        user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
+
+        if not user:
+            return 'ユーザ名もしくはパスワードが異なります'
+            # return redirect('/login')
+
+        flask_login.login_user(user)
+
+        return redirect('/main')
+
+@app.route('/logout')
+def logout():
+    flask_login.logout_user()
+    return "ログアウトしました"
 
 @app.route('/main')
 @flask_login.login_required
