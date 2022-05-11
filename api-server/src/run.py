@@ -3,6 +3,7 @@ from models import db, User
 from flask_migrate import Migrate
 import flask_login
 import hashlib
+import time
 
 def create_app():
     app = Flask(__name__)
@@ -132,6 +133,12 @@ def main_isLogin():
 @login_manager.unauthorized_handler
 def main_isntLogin():
     return 'ログインしていません'
+
+@app.route('/<others>')
+def no_url(others):
+    print(others + 'というURLはありません。\n5秒後に遷移します')
+    time.sleep(5)
+    return redirect('/main')
 
 @login_manager.user_loader
 def load_user(user_id):
