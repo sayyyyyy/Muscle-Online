@@ -1,9 +1,10 @@
 from flask import Flask, redirect, request, url_for
-from models import db, User
+from models import db, User, Room, User_Room
 from flask_migrate import Migrate
 import flask_login
 import hashlib
 import time
+import random, string
 
 def create_app():
     app = Flask(__name__)
@@ -23,6 +24,7 @@ login_manager.init_app(app)
 
 @app.route('/')
 def test():
+    create_room()
     return 'test'
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -143,6 +145,20 @@ def no_url(others):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+def create_room():
+    room_pass = ''.join(random.choice(string.ascii_letters + string.digits) for i in range(6))
+    room_name = 'テスト部屋'
+    
+    room = Room(name=room_name)
+    
+
+    db.session.add(room)
+
+    user_room = User_Room(user_id=user_id, room_id=room_id)
+    db.session.add(user_room)
+    db.session.commit()
+    
 
 if __name__ == '__main__':
     app.run()
