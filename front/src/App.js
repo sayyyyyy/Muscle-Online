@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./components/Home";
+import Dashboard from "./components/Dashboard";
+import {useState,useEffect} from "react"
+import axios from "axios";
 
-function App() {
+const App = (props) => {
+
+  const [loggedInStatus,setLoggedInStatus]=useState("未ログイン") //ユーザーのログイン状態を参照
+  const [user, setUser] = useState({})//ユーザーをログインさせる際に必要
+
+  const handleLogin=(data)=>{
+    setLoggedInStatus("現在ログインしております") //ログインして or いないの文章をここで変換
+    setUser(data.user)//userオブジェクトの値を書き換えています。
+  }
+
+  const handleLogout=(data)=>{
+    setLoggedInStatus("未ログイン")
+    setUser({})
+
+  }
+  useEffect(()=>{//ページがリロードされるたびに毎回呼び出される
+    checkLoginStatus()
+  })
+
+  const checkLoginStatus=()=>{
+    axios.get("http://localhost:5000/logged_in",{withCredentials: true})//logged_inはアクション名　ここを変更すれば良い
+    .then(res => {
+      console.log("ログイン状況", res)
+    }).catch(err => {
+      console.log("ログインエラー", err)
+    })
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path={`/`} element={<Home {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>} />
+        <Route path={`/dashboard/`} element={<Dashboard {...props} loggedInStatus={loggedInStatus} />} />
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
