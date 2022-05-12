@@ -1,9 +1,11 @@
-from flask import Flask, redirect, request, url_for
-from models import db, User
+from flask import Flask, redirect, request, url_for, session
+from models import db, User, Room, User_Room, Match
 from flask_migrate import Migrate
 import flask_login
 import hashlib
 import time
+import random, string
+import datetime
 
 def create_app():
     app = Flask(__name__)
@@ -134,11 +136,29 @@ def main_isLogin():
 def main_isntLogin():
     return 'ログインしていません'
 
-@app.route('/<others>')
-def no_url(others):
-    print(others + 'というURLはありません。\n5秒後に遷移します')
-    time.sleep(5)
-    return redirect('/main')
+# @app.route('/<others>')
+# def no_url(others):
+#     print(others + 'というURLはありません。\n5秒後に遷移します')
+#     time.sleep(5)
+#     return redirect('/main')
+
+def create_room():
+    room_pass = ''.join(random.choice(string.ascii_letters + string.digits) for i in range(6))
+    room_name = 'テスト部屋'
+
+    room = Room(name=room_name, is_open=1)
+
+    db.session.add(room)
+    
+    user_room = User_Room(user_id=flask_login.current_user.user_id, room_id=room.room_id)
+    db.session.add(user_room)
+
+    game_info_id = 1
+    match = Match(game_info_id=game_info_id, room_id=room.room_id, time=datetime.datetime.now())
+    db.session.add(match)
+    db.session.commit()
+
+    session['room_pass'] = room_pass
 
 @login_manager.user_loader
 def load_user(user_id):
