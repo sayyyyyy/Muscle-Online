@@ -56,6 +56,7 @@ class User_Room(db.Model):
     user_room_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.room_id'), nullable=False)
+    count = db.Column(db.Integer, default=0)
 
 class User_RoomSchema(ma.Schema):
     class Meta:
@@ -119,8 +120,6 @@ class Match(db.Model):
     match_id = db.Column(db.Integer, primary_key=True)
     game_info_id = db.Column(db.Integer, db.ForeignKey('gameinformations.game_info_id'), nullable=False)
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.room_id'), nullable=False)
-    user1_count = db.Column(db.Integer)
-    user2_count = db.Column(db.Integer)
     winner_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     is_finish = db.Column(db.Boolean, default=False)
     finish_time = db.Column(db.DateTime)

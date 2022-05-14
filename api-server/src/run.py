@@ -171,6 +171,51 @@ def create_room():
 
     return session['room_pass']
 
+@app.route('/search_room', methods=['GET', 'POST'])
+@flask_login.login_required
+def search_room():
+    if request.method == "POST":
+        session['room_pass'] = ''
+        room_pass = request.form.get('room_pass')
+
+        search_room = Room.query.filter_by(room_pass=room_pass, is_open=1)
+        if not search_room:
+            print('ルームが見つかりませんでした')
+            return 'ルームが見つかりませんでした'
+
+        add_user_room = User_Room(user_id=flask_login.current_user.user_id, room_id=search_room.room_id)
+        db.session.add(add_user_room)
+
+        # isopenを0にする
+        search_room.is_open = 0
+        
+        session['room_id'] = search_room.room_id
+
+        db.session.commit()
+
+        
+        return 'POST'
+    else:
+        session['room_pass'] = ''
+        room_pass = '7yIJSJ'
+
+        search_room = Room.query.filter_by(room_pass=room_pass, is_open=1)
+        if not search_room:
+            print('ルームが見つかりませんでした')
+            return 'ルームが見つかりませんでした'
+
+        add_user_room = User_Room(user_id=flask_login.current_user.user_id, room_id=search_room.room_id)
+        db.session.add(add_user_room)
+
+        # isopenを0にする
+        search_room.is_open = 0
+        
+        session['room_id'] = search_room.room_id
+        
+        db.session.commit()
+
+        
+        return 'GET'
 
 
 @app.route('/add_data')
