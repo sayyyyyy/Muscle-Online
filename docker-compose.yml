@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  server:
+    container_name: api-server
+    build: ./api-server/
+    ports:
+      - 5000:5000
+    links:
+      - db
+    volumes:
+      - ./api-server/src:/project
+    environment:
+      TZ: Asia/Tokyo
+      FLASK_ENV: 'development'
+      FLASK_APP: 'run.py'
+    command: flask run -h 0.0.0.0
+    tty: true
+  db:
+    build: ./db/
+    container_name: db-server
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
+    ports:
+      - 3306:3306
+  front:
+    build: ./front/
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./front:/usr/src/app
+    command: sh -c ' yarn start'
+    ports:
+      - '3000:3000'
+    tty: true
