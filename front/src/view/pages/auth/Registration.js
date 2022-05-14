@@ -12,7 +12,7 @@ const Registration = (props) => {
   const handleSubmit =(event)=>{ 
     console.log(email)
     console.log(password)
-    axios.get("http://localhost:5001/signup",
+    axios.post("http://localhost:5001/signup",
     {
       user:{
         email:email,
@@ -20,7 +20,7 @@ const Registration = (props) => {
         password_confirmation: passwordConfirmation
       }
     },
-    { withCredentials: true } //cookieを含むか
+    // { withCredentials: true } //cookieを含むか
     ).then(res=>{ //ユーザー作成成功
         console.log("registration res", res)
         if(res.data.status==='create'){ //railsのAPIのdata.statasを見て判断する。
