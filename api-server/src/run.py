@@ -1,11 +1,12 @@
 from flask import Flask, redirect, request, url_for, session
-from models import db, User, Room, User_Room, Match
+from models import db, User, Room, User_Room, Match, Game
 from flask_migrate import Migrate
 import flask_login
 import hashlib
 import time
 import random, string
 import datetime
+import initial_data
 
 def create_app():
     app = Flask(__name__)
@@ -63,7 +64,7 @@ def signup():
 
         # フロント側の処理が完成したらGETメソッドの処理は削除する
 
-        email = 'test@a.a'
+        email = 'test@a.b'
         name = 'test'
         password = 'password'
 
@@ -96,7 +97,7 @@ def login():
         # email = request.form.get('email')
         # password = request.form.get('password')
 
-        email = 'test@a.a'
+        email = 'test@a.b'
         password = 'password'
 
         user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
@@ -109,7 +110,7 @@ def login():
 
         return redirect('/main')
     else:
-        email = 'test@a.a'
+        email = 'test@a.b'
         password = 'password'
 
         user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
@@ -142,23 +143,48 @@ def main_isntLogin():
 #     time.sleep(5)
 #     return redirect('/main')
 
+@app.route('/create_room')
+@flask_login.login_required
 def create_room():
-    room_pass = ''.join(random.choice(string.ascii_letters + string.digits) for i in range(6))
+    
     room_name = 'テスト部屋'
 
-    room = Room(name=room_name, is_open=1)
+    while 1:
+        room_pass = ''.join(random.choice(string.ascii_letters + string.digits) for i in range(6))
+        exist_room = Room(room_pass=room_pass, is_open=1).query.filter_by().first()
+        if not exist_room:
+            break
 
+    room = Room(room_name=room_name, room_pass=room_pass, is_open=1)
+    print(room)
     db.session.add(room)
     
-    user_room = User_Room(user_id=flask_login.current_user.user_id, room_id=room.room_id)
+    created_room = Room(room_pass=room_pass, is_open=1).query.filter_by().first()
+    user_room = User_Room(user_id=flask_login.current_user.user_id, room_id=created_room.room_id)
     db.session.add(user_room)
 
     game_info_id = 1
-    match = Match(game_info_id=game_info_id, room_id=room.room_id, time=datetime.datetime.now())
+    match = Match(game_info_id=game_info_id, room_id=created_room.room_id, finish_time=datetime.datetime.now())
     db.session.add(match)
     db.session.commit()
 
     session['room_pass'] = room_pass
+
+    return session['room_pass']
+
+@app.route('/add_data')
+def add_data():
+    initial_data.add_user()
+    initial_data.add_gameformat()
+    initial_data.add_game()
+    initial_data.add_gameinfo(1, 1)
+    initial_data.add_rankinginfo(1)
+
+    game = Game().query.filter_by().first()
+    print(game)
+    print(game.name)
+    print(game.description)
+    return 'test'
 
 @login_manager.user_loader
 def load_user(user_id):

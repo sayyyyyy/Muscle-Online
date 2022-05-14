@@ -39,6 +39,7 @@ class Room(db.Model):
 
     room_id = db.Column(db.Integer, primary_key=True)
     room_name = db.Column(db.String(255), default="フレンド対戦")
+    room_pass = db.Column(db.String(6), nullable=False)
     is_open = db.Column(db.Boolean, default=False)
 
     to_user_room = db.relationship('User_Room', backref='rooms', lazy=True)
