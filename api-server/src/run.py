@@ -151,15 +151,14 @@ def create_room():
 
     while 1:
         room_pass = ''.join(random.choice(string.ascii_letters + string.digits) for i in range(6))
-        exist_room = Room(room_pass=room_pass, is_open=1).query.filter_by().first()
+        exist_room = Room.query.filter_by(room_pass=room_pass, is_open=1).first()
         if not exist_room:
             break
 
     room = Room(room_name=room_name, room_pass=room_pass, is_open=1)
-    print(room)
     db.session.add(room)
     
-    created_room = Room(room_pass=room_pass, is_open=1).query.filter_by().first()
+    created_room = Room.query.filter_by(room_pass=room_pass, is_open=1).first()
     user_room = User_Room(user_id=flask_login.current_user.user_id, room_id=created_room.room_id)
     db.session.add(user_room)
 
@@ -171,6 +170,8 @@ def create_room():
     session['room_pass'] = room_pass
 
     return session['room_pass']
+
+
 
 @app.route('/add_data')
 def add_data():

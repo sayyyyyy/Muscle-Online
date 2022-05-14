@@ -1,4 +1,5 @@
 import os 
+import datetime
 
 class DevelopmentConfig:
 
@@ -12,5 +13,7 @@ class DevelopmentConfig:
     SQLALCHEMY_ECHO = False
 
     SECRET_KEY = os.getenv('SECRET_KEY')
+
+    PERMANENT_SESSION_LIFETIME = datetime.timedelta(minutes=10)
 
 Config = DevelopmentConfig
