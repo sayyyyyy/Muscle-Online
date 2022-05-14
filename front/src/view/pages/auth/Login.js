@@ -33,7 +33,8 @@ const Login= (props) => {
   
   return (
     <>
-      <h1>新規登録</h1>
+    <h2>ログイン状態: {props.loggedInStatus}</h2>
+      <h1>ログイン</h1>
 
       <form onSubmit={handleSubmit}>
         <input 
