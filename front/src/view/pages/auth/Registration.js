@@ -12,7 +12,7 @@ const Registration = (props) => {
   const handleSubmit =(event)=>{ 
     console.log(email)
     console.log(password)
-    axios.post("http://localhost:5000/signup",
+    axios.get("http://localhost:5001/signup",
     {
       user:{
         email:email,
