@@ -1,10 +1,11 @@
-from flask import Flask, redirect, request, url_for
+from flask import Flask, redirect, request, url_for, session
 from models import db, User
 from flask_migrate import Migrate
 import flask_login
 import hashlib
 import time
 from flask_cors import CORS
+from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
 
 def create_app():
     app = Flask(__name__)
@@ -22,6 +23,7 @@ def create_app():
 app = create_app()
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
+jwt = JWTManager(app)
 
 @app.after_request
 def after_request(response):
@@ -32,36 +34,47 @@ def after_request(response):
 
 @app.route('/')
 def test():
-    print(request.get_json())
-    return 'test'
+    if 'user' in session:
+        print(session['user'])
+        return {'data': session['user']}
+    else:
+        print('セッションないよ')
+    # print(session)
+    return {'data': 'NO SESSION'}
+    
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == "POST":
-        email = request.form.get('email')
-        name = request.form.get('name')
-        password = request.form.get('password')
+        # email = request.form.get('email')
+        # name = request.form.get('name')
+        # password = request.form.get('password')
         data = request.get_json()
         
 
-        user = User.query.filter_by(email=email).first()
+        # user = User.query.filter_by(email=email).first()
 
-        if user:
-            return redirect(url_for('signup'))
+        # if user:
+        #     return redirect(url_for('signup'))
 
-        new_user = User(name=name, password=hashlib.sha256(password.encode('utf-8')).hexdigest(), email=email)
+        # new_user = User(name=name, password=hashlib.sha256(password.encode('utf-8')).hexdigest(), email=email)
         
-        db.session.add(new_user)
-        db.session.commit()
+        # db.session.add(new_user)
+        # db.session.commit()
 
-        add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
+        # add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
 
-        if not add_user:
-            print('追加に失敗しました')
-            return '追加に失敗しました'
+        # if not add_user:
+        #     print('追加に失敗しました')
+        #     return '追加に失敗しました'
             # return redirect('/signup')
 
-        flask_login.login_user(new_user)
+        print(data)
+        print(data['user']['email'])
+        session['user'] = data['user']['email']
+        print(session['user'])
+        # flask_login.login_user(new_user)
+        return {'data': 'create'}
 
 
         return redirect(url_for('main'))

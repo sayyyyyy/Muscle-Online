@@ -9,3 +9,4 @@ flask-marshmallow
 marshmallow-sqlalchemy
 python-dotenv
 flask-cors
+flask-jwt-extended

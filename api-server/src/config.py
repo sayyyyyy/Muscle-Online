@@ -12,5 +12,6 @@ class DevelopmentConfig:
     SQLALCHEMY_ECHO = False
 
     SECRET_KEY = os.getenv('SECRET_KEY')
+    JWT_SECRET_KEY = "test_key"
 
 Config = DevelopmentConfig

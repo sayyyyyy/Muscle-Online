@@ -9,21 +9,9 @@ const Login= (props) => {
 
   //APIに送信
   const handleSubmit =(event)=>{ 
-    console.log(email)
-    console.log(password)
-    axios.post("http://localhost:5000/login",
-    {
-      user:{
-        email:email,
-        password:password,
-      }
-    },
-    { withCredentials: true } //cookieを含むか
+    axios.get("http://localhost:5001/",
     ).then(res=>{ //ユーザー作成成功
         console.log("registration res", res)
-        if(res.data.logged_in){ //logged_inがtrueの時に成功
-          props.handleSuccessfullAuthentication(res.data) //新規登録画面に飛ぶ(home.jsの関数)
-        }
        
     }).catch(err=>{//ユーザー作成失敗
         console.log("registration res", err)
