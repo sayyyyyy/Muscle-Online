@@ -8,3 +8,4 @@ flask-login
 flask-marshmallow
 marshmallow-sqlalchemy
 python-dotenv
+flask-cors
