@@ -1,8 +1,8 @@
-import Login from './auth/Login'
-import Registration from './auth/Registration'
+import Login from './auth/Signin'
+import Registration from './auth/Signup'
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-
+import classes from './../../style/Top.module.css'
 
 const Top = (props) => {
   const handleSuccessfulAuthentication=(data)=>{ //dataとはユーザーオブジェクト
@@ -21,15 +21,21 @@ const Top = (props) => {
 
   return (
     <>
-       <h1>スタート画面</h1>
-      {/* <h2>ログイン状態: {props.loggedInStatus}</h2>
-      <Registration handleSuccessfulAuthentication={handleSuccessfulAuthentication}/>
-      <Login handleSuccessfulAuthentication={handleSuccessfulAuthentication}/>
-      <button onClick={handleLogoutClick}>ログアウト</button> */}
-     
-      <button> <Link to="/registration">新規登録</Link></button>
-      <button> <Link to="/login">ログイン</Link></button>
-
+      <div className={classes.backgroundStyle1}></div>
+      <div className={classes.backgroundStyle2}></div>
+      <div className={classes.containerStyle}>
+         <img className={classes.logoStyle} src={`${process.env.PUBLIC_URL}/img/logo.png`} alt="ロゴ"/>
+        {/* <h2>ログイン状態: {props.loggedInStatus}</h2>
+        <Registration handleSuccessfulAuthentication={handleSuccessfulAuthentication}/>
+        <Login handleSuccessfulAuthentication={handleSuccessfulAuthentication}/>
+        <button onClick={handleLogoutClick}>ログアウト</button> */}
+        <br />
+        <button className={classes.buttonStyle}> <Link  className={classes.linkStyle} to="/registration">新規登録</Link></button>
+        <br />
+        <button className={classes.buttonStyle}> <Link to="/login" className={classes.linkStyle}>ログイン</Link></button>
+      </div>
+      {/* <div className={classes.backgroundStyle3}></div>
+      <div className={classes.backgroundStyle4}></div> */}
     </>
   );
 };

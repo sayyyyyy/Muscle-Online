@@ -3,8 +3,8 @@ import {useState,useEffect} from "react"
 import axios from "axios";
 
 import Top from "./view/pages/Top";
-import Registration from "./view/pages/auth/Registration";
-import Login from "./view/pages/auth/Login";
+import Signup from "./view/pages/auth/Signup";
+import Signin from "./view/pages/auth/Signin";
 import Home from "./view/pages/Home";
 
 const App = (props) => {
@@ -27,7 +27,7 @@ const App = (props) => {
   })
 
   const checkLoginStatus=()=>{
-    axios.get("http://localhost:5000/logged_in",{withCredentials: true})//logged_inはアクション名　ここを変更すれば良い
+    axios.get("http://localhost:5000/signup",{withCredentials: true})//logged_inはアクション名　ここを変更すれば良い
     .then(res => {
       console.log("ログイン状況", res)
     }).catch(err => {
@@ -39,8 +39,8 @@ const App = (props) => {
       <Routes>
         <Route path={`/`} element={<Top {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>} />
         {/* <Route path={`/dashboard/`} element={<Dashboard {...props} loggedInStatus={loggedInStatus} />} /> */}
-        <Route path={`/registration`} element={<Registration {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>}/>
-        <Route path={`/login`} element={<Login {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>}/>
+        <Route path={`/registration`} element={<Signup {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>}/>
+        <Route path={`/login`} element={<Signin {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>}/>
         <Route path={`/home`}  render={props =>( <Home {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>)} />
       </Routes>
     </BrowserRouter>

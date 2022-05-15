@@ -1,8 +1,9 @@
 /* Register.js */
 import React,{useState} from "react"
 import axios from "axios";
+import { Link } from 'react-router-dom';
 
-const Login= (props) => {
+const Signin= (props) => {
 
   const [email, setEmail]=useState("")
   const [password,setPassword]=useState("")
@@ -53,8 +54,9 @@ const Login= (props) => {
         />
         <button type="submit">登録</button>
       </form>
+      <button> <Link to="/">戻る</Link></button>
     </>
   );
 };
 
-export default Login;
+export default Signin;
