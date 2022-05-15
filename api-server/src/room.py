@@ -27,7 +27,7 @@ def create_room():
     db.session.add(user_room)
 
     game_info_id = 1
-    match = Match(game_info_id=game_info_id, room_id=created_room.room_id, finish_time=datetime.datetime.now())
+    match = Match(game_info_id=game_info_id, room_id=created_room.room_id, winner_id=1, finish_time=datetime.datetime.now())
     db.session.add(match)
     db.session.commit()
 
@@ -42,7 +42,7 @@ def search_room():
         session['room_pass'] = ''
         room_pass = request.form.get('room_pass')
 
-        search_room = Room.query.filter_by(room_pass=room_pass, is_open=1)
+        search_room = Room.query.filter_by(room_pass=room_pass, is_open=1).first()
         if not search_room:
             print('ルームが見つかりませんでした')
             return 'ルームが見つかりませんでした'
@@ -61,12 +61,13 @@ def search_room():
         return 'POST'
     else:
         session['room_pass'] = ''
-        room_pass = '7yIJSJ'
+        room_pass = 'EzWY8K'
 
-        search_room = Room.query.filter_by(room_pass=room_pass, is_open=1)
+        search_room = Room.query.filter_by(room_pass=room_pass, is_open=1).first()
         if not search_room:
             print('ルームが見つかりませんでした')
             return 'ルームが見つかりませんでした'
+
 
         add_user_room = User_Room(user_id=flask_login.current_user.user_id, room_id=search_room.room_id)
         db.session.add(add_user_room)
@@ -79,4 +80,4 @@ def search_room():
         db.session.commit()
 
         
-        return 'GET'
+        return 'a'

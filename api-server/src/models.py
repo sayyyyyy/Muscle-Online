@@ -119,7 +119,7 @@ class Match(db.Model):
 
     match_id = db.Column(db.Integer, primary_key=True)
     game_info_id = db.Column(db.Integer, db.ForeignKey('gameinformations.game_info_id'), nullable=False)
-    room_id = db.Column(db.Integer, db.ForeignKey('rooms.room_id'), nullable=False)
+    room_id = db.Column(db.Integer, db.ForeignKey('rooms.room_id'))
     winner_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     is_finish = db.Column(db.Boolean, default=False)
     finish_time = db.Column(db.DateTime)
