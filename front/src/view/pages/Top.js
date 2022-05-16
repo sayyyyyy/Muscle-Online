@@ -2,7 +2,7 @@ import Login from './auth/Signin'
 import Registration from './auth/Signup'
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import classes from './../../style/Top.module.css'
+import classes from './../../style/page/Top.module.css'
 
 const Top = (props) => {
   const handleSuccessfulAuthentication=(data)=>{ //dataとはユーザーオブジェクト

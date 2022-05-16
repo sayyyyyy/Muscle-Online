@@ -6,6 +6,8 @@ import Top from "./view/pages/Top";
 import Signup from "./view/pages/auth/Signup";
 import Signin from "./view/pages/auth/Signin";
 import Home from "./view/pages/Home";
+import Battlelog from "./view/pages/Buttlelog"
+import Mypage from "./view/pages/Mypage"
 
 const App = (props) => {
 
@@ -41,7 +43,9 @@ const App = (props) => {
         {/* <Route path={`/dashboard/`} element={<Dashboard {...props} loggedInStatus={loggedInStatus} />} /> */}
         <Route path={`/registration`} element={<Signup {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>}/>
         <Route path={`/login`} element={<Signin {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>}/>
-        <Route path={`/home`}  render={props =>( <Home {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>)} />
+        <Route path={`/home`}  element={ <Home {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>} />
+        <Route path={`/battlelog`}  element={ <Battlelog {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>} />
+        <Route path={`/mypage`}  element={ <Battlelog {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>} />
       </Routes>
     </BrowserRouter>
   );
