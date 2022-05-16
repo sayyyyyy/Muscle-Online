@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type='text' id="room_pass">
+    <button id="button">click!</button>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+        $('#button').click(function(){
+            let socket = io.connect('http://localhost:5001/room');
+            socket.on('connect', function() {
+                let room_pass = document.getElementById('room_pass');
+                console.log(room_pass.value);
+                // let room_pass = 'aaa';
+                if (room_pass){
+                    socket.emit('join', {'room_pass': room_pass.value});
+                } else {
+                    socket.emit('join', {});
+                }
+            });
+            socket.on('return', function(data) {
+                console.log(data)
+            });
+
+        })
+
+    </script>
+</body>
+</html>

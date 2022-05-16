@@ -1,4 +1,4 @@
-from flask import Blueprint, session, request
+from flask import Blueprint, session, request, redirect
 import random
 import string
 from models import Room, db, User_Room, Match
@@ -33,7 +33,7 @@ def create_room():
 
     session['room_pass'] = room_pass
 
-    return session['room_pass']
+    return redirect('/')
 
 @room_bp.route('/search_room', methods=['GET', 'POST'])
 @flask_login.login_required
