@@ -9,3 +9,5 @@ db/Dockerfile
 
 # データベース作成時のmigrationファイル
 migrations
+
+node_modules

@@ -1,8 +1,13 @@
-from flask import Flask, redirect, request, url_for
-from models import db, User
+from flask import Flask, render_template, session, jsonify
+from models import db, User, Game
 from flask_migrate import Migrate
 import flask_login
-import hashlib
+import initial_data
+from flask_socketio import SocketIO, emit, join_room
+from user import user_bp
+from room import room_bp
+from history import history_bp
+import models
 import time
 
 def create_app():
@@ -21,128 +26,113 @@ app = create_app()
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
+
+app.register_blueprint(user_bp)
+app.register_blueprint(room_bp)
+app.register_blueprint(history_bp)
+
+socketio = SocketIO(app)
+
 @app.route('/')
 def test():
-    return 'test'
-
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    if request.method == "POST":
-        # email = request.form.get('email')
-        # name = request.form.get('name')
-        # password = request.form.get('password')
-
-        email = 'test@a.a'
-        name = 'test'
-        password = 'password'
-
-        user = User.query.filter_by(email=email).first()
-
-        if user:
-            return redirect(url_for('signup'))
-
-        new_user = User(name=name, password=hashlib.sha256(password.encode('utf-8')).hexdigest(), email=email)
-        
-        db.session.add(new_user)
-        db.session.commit()
-
-        add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
-
-        if not add_user:
-            print('追加に失敗しました')
-            return '追加に失敗しました'
-            # return redirect('/signup')
-
-        flask_login.login_user(new_user)
-
-
-        return redirect(url_for('main'))
-    else:
-
-        # フロント側の処理が完成したらGETメソッドの処理は削除する
-
-        email = 'test@a.a'
-        name = 'test'
-        password = 'password'
-
-        user = User.query.filter_by(email=email).first()
-
-        if user:
-            print('そのメールアドレスは使われています')
-            return 'そのメールアドレスは使われています'
-            # return redirect('/signup')
-
-        new_user = User(name=name, password=hashlib.sha256(password.encode('utf-8')).hexdigest(), email=email)
-        
-        db.session.add(new_user)
-        db.session.commit()
-
-        add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
-
-        if not add_user:
-            print('追加に失敗しました')
-            return '追加に失敗しました'
-            # return redirect('/signup')
-
-        flask_login.login_user(new_user)
-
-        return redirect('main')
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == "POST":
-        # email = request.form.get('email')
-        # password = request.form.get('password')
-
-        email = 'test@a.a'
-        password = 'password'
-
-        user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
-
-        if not user:
-            return 'ユーザ名もしくはパスワードが異なります'
-            # return redirect('/login')
-
-        flask_login.login_user(user)
-
-        return redirect('/main')
-    else:
-        email = 'test@a.a'
-        password = 'password'
-
-        user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
-
-        if not user:
-            return 'ユーザ名もしくはパスワードが異なります'
-            # return redirect('/login')
-
-        flask_login.login_user(user)
-
-        return redirect('/main')
-
-@app.route('/logout')
-def logout():
-    flask_login.logout_user()
-    return "ログアウトしました"
+    return render_template('socket.html')
 
 @app.route('/main')
 @flask_login.login_required
 def main_isLogin():
+    user_room = models.User_Room.query.filter_by(room_id=7).all()
+    print(type(user_room))
+    print(user_room)
     return 'ログインしています'
 
 @login_manager.unauthorized_handler
 def main_isntLogin():
     return 'ログインしていません'
 
-@app.route('/<others>')
-def no_url(others):
-    print(others + 'というURLはありません。\n5秒後に遷移します')
-    time.sleep(5)
-    return redirect('/main')
+# @app.route('/<others>')
+# def no_url(others):
+#     print(others + 'というURLはありません。\n5秒後に遷移します')
+#     time.sleep(5)
+#     return redirect('/main')
+
+
+@app.route('/show_')
+def method_name():
+    pass
+
+@app.route('/add_data')
+def add_data():
+    initial_data.add_user()
+    initial_data.add_gameformat()
+    initial_data.add_game()
+    initial_data.add_gameinfo(1, 1)
+    initial_data.add_rankinginfo(1)
+
+    game = Game().query.filter_by().first()
+    print(game)
+    print(game.name)
+    print(game.description)
+    return 'test'
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+@socketio.on('join', namespace='/room')
+@flask_login.login_required
+def join(message):
+
+    # ルームに入る側
+    if message['room_pass']:
+        room = models.Room.query.filter_by(room_pass=message['room_pass'], is_open=1).first()
+        if not room:
+            emit('return', {'code': 'error', 'state': 'Not exist Room'})
+            return 0
+
+        add_user_room = models.User_Room(user_id=flask_login.current_user.user_id, room_id=room.room_id)
+        db.session.add(add_user_room)
+
+        session['room_pass'] = message['room_pass']
+        join_room(session['room_pass'])
+
+        room.is_open = 0
+        db.session.commit()
+    # ルームを作る側
+    else:
+        if not 'room_pass' in session:
+            emit('return', {'code': 'error', 'state': 'Not Room Pass'})
+            return 0
+
+        room = models.Room.query.filter_by(room_pass=session['room_pass'], is_open=1).first()
+        if not room:
+            emit('return', {'code': 'error', 'state': 'Not exist Room'})
+            return 0        
+        join_room(room.room_id)
+    
+    user_room = models.User_Room.query.filter_by(room_id=room.room_id).all()
+    user_list = {}
+    for num, user in enumerate(user_room):
+        user_data = models.User.query.filter_by(user_id=user.user_id).first()
+        user_list[num] = {'name': user_data.name}
+
+    emit('return', {'user_list': user_list, 'room_pass': session['room_pass']})
+
+@login_manager.unauthorized_handler
+def not_login_join():
+    emit('return', {'code': 'error', 'state': 'Not Login'})
+    return 0
+
+
+@socketio.on('leave')
+def leave_room():
+    leave_room(session['room_pass'])
+
+def count_down(seconds):
+    for second in range(1, seconds):
+        time.sleeo(1)
+        print(second)
+        emit('count', {'count_down': second})
+
 if __name__ == '__main__':
-    app.run()
+    socketio.run(app)
+    # app.run()

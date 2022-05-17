@@ -7,4 +7,5 @@ flask-migrate
 flask-login
 flask-marshmallow
 marshmallow-sqlalchemy
-python-dotenv
+flask-socketio
+eventlet
