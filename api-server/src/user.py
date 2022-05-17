@@ -4,6 +4,7 @@ import hashlib
 import flask_login
 
 
+
 user_bp = Blueprint('bupr', __name__)
 
 
@@ -70,7 +71,7 @@ def signup():
         new_user_data = User_Data(user_id=add_user.user_id)
         db.session.add(new_user_data)
         db.session.commit()
-        
+
         flask_login.login_user(new_user)
 
         return redirect('main')

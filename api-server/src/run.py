@@ -9,6 +9,9 @@ from room import room_bp
 from history import history_bp
 import models
 import time
+import hashlib
+from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
+                               unset_jwt_cookies, jwt_required, JWTManager
 
 def create_app():
     app = Flask(__name__)
@@ -32,6 +35,7 @@ app.register_blueprint(room_bp)
 app.register_blueprint(history_bp)
 
 socketio = SocketIO(app)
+jwt = JWTManager(app)
 
 @app.route('/')
 def test():
@@ -55,10 +59,26 @@ def main_isntLogin():
 #     time.sleep(5)
 #     return redirect('/main')
 
+@app.route('/token')
+def create_token():
+    email = 'test@a.b'
+    password = 'password'
 
-@app.route('/show_')
-def method_name():
-    pass
+    # パスワード等が違ったときの処理
+    user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
+
+    if not user:
+        return 'ユーザーが見つかりません'
+    access_token = create_access_token(user.user_id)
+
+    response ={'access_token': access_token}
+    return response
+
+@app.route('/logout')
+def logout():
+    response = jsonify({'msg': 'logout success'})
+    unset_jwt_cookies(response)
+    return response
 
 @app.route('/add_data')
 def add_data():

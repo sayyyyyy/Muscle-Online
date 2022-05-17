@@ -15,4 +15,7 @@ def history():
                     '勝利数': user_data.num_of_win,
                     '敗北数': user_data.num_of_lose}
 
+    # 一つ一つの試合結果 ゲーム情報と回数
+    
+
     return {'code': 200, 'data': return_data}
