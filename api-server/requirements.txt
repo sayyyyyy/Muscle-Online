@@ -11,3 +11,6 @@ flask-cors
 flask-jwt-extended
 flask-socketio
 eventlet
+opencv-python
+mediapipe
+numpy

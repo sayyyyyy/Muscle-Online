@@ -11,8 +11,8 @@ def history():
     if not user_data:
         return 'データが見つかりません'
     
-    return_data = {'試合数': user_data.num_of_match,
-                    '勝利数': user_data.num_of_win,
-                    '敗北数': user_data.num_of_lose}
+    return_data = {'match': user_data.num_of_match,
+                    'win': user_data.num_of_win,
+                    'lose': user_data.num_of_lose}
 
     return {'code': 200, 'data': return_data}

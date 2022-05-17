@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-from flask import Flask, redirect, request, url_for, session
-from models import db, User
-=======
-from flask import Flask, render_template, session, jsonify
+from flask import Flask, render_template, session, Response
 from models import db, User, Game
->>>>>>> 5eb44764af7ee1f7c365842075612f1782734e53
 from flask_migrate import Migrate
 import flask_login
 import initial_data
@@ -16,6 +11,7 @@ import models
 import time
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
+# from camera import VideoCamera
 
 def create_app():
     app = Flask(__name__)
@@ -52,6 +48,29 @@ socketio = SocketIO(app)
 def test():
     return render_template('socket.html')
 
+@app.route('/camera')
+def index():
+    return render_template('index.html')
+
+    # "/" を呼び出したときには、indexが表示される。
+
+def gen(camera):
+    while True:
+        frame = camera.get_frame()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
+# returnではなくジェネレーターのyieldで逐次出力。
+# Generatorとして働くためにgenとの関数名にしている
+# Content-Type（送り返すファイルの種類として）multipart/x-mixed-replace を利用。
+# HTTP応答によりサーバーが任意のタイミングで複数の文書を返し、紙芝居的にレンダリングを切り替えさせるもの。
+#（※以下に解説参照あり）
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen(VideoCamera()),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
 @app.route('/main')
 @flask_login.login_required
 def main_isLogin():
@@ -64,16 +83,6 @@ def main_isLogin():
 def main_isntLogin():
     return 'ログインしていません'
 
-# @app.route('/<others>')
-# def no_url(others):
-#     print(others + 'というURLはありません。\n5秒後に遷移します')
-#     time.sleep(5)
-#     return redirect('/main')
-
-
-@app.route('/show_')
-def method_name():
-    pass
 
 @app.route('/add_data')
 def add_data():
