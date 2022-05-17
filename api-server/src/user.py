@@ -1,5 +1,5 @@
 from flask import request, redirect, url_for, Blueprint
-from models import User, db
+from models import User, User_Data, db
 import hashlib
 import flask_login
 
@@ -60,12 +60,17 @@ def signup():
         db.session.commit()
 
         add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
+        
 
         if not add_user:
             print('追加に失敗しました')
             return '追加に失敗しました'
             # return redirect('/signup')
 
+        new_user_data = User_Data(user_id=add_user.user_id)
+        db.session.add(new_user_data)
+        db.session.commit()
+        
         flask_login.login_user(new_user)
 
         return redirect('main')

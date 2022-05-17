@@ -6,9 +6,9 @@ import initial_data
 from flask_socketio import SocketIO, emit, join_room
 from user import user_bp
 from room import room_bp
+from history import history_bp
 import models
 import time
-import json
 
 def create_app():
     app = Flask(__name__)
@@ -29,14 +29,13 @@ login_manager.init_app(app)
 
 app.register_blueprint(user_bp)
 app.register_blueprint(room_bp)
+app.register_blueprint(history_bp)
 
 socketio = SocketIO(app)
 
 @app.route('/')
 def test():
     return render_template('socket.html')
-
-
 
 @app.route('/main')
 @flask_login.login_required
@@ -78,10 +77,6 @@ def add_data():
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
-# @socketio.on('connect', namespace='/room')
-# def connect():
-#     emit('join')
 
 @socketio.on('join', namespace='/room')
 @flask_login.login_required

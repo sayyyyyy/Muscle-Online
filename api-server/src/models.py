@@ -104,7 +104,6 @@ class GameInformation(db.Model):
     game_info = db.Column(db.Integer, nullable=False)
 
     to_match = db.relationship('Match', backref='gameinformations', lazy=True)
-    to_user_data = db.relationship('User_Data', backref='gameinformations', lazy=True)
 
 class GameInformationSchema(ma.Schema):
     class Meta:
@@ -136,14 +135,13 @@ class User_Data(db.Model):
 
     user_data_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    game_info_id = db.Column(db.Integer, db.ForeignKey('gameinformations.game_info_id'), nullable=False)
     num_of_match = db.Column(db.Integer, default=0)
     num_of_win = db.Column(db.Integer, default=0)
     num_of_lose = db.Column(db.Integer, default=0)
 
 class User_DataSchema(ma.Schema):
     class Meta:
-        fields = ('user_data_id', 'user_id', 'game_info_id', 'num_of_match', 'num_of_win', 'num_of_lose', 'user', 'gameinfo')
+        fields = ('user_data_id', 'user_id', 'num_of_match', 'num_of_win', 'num_of_lose', 'user', 'gameinfo')
     user = ma.Nested(UserSchema, many=False)
     gameinfo = ma.Nested(GameInformationSchema, many=False)
 
