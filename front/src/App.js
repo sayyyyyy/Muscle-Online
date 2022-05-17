@@ -45,7 +45,7 @@ const App = (props) => {
         <Route path={`/login`} element={<Signin {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>}/>
         <Route path={`/home`}  element={ <Home {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>} />
         <Route path={`/battlelog`}  element={ <Battlelog {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>} />
-        <Route path={`/mypage`}  element={ <Battlelog {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>} />
+        <Route path={`/mypage`}  element={ <Mypage {...props}  handleLogin={handleLogin}  handleLogout={handleLogout} loggedInStatus={loggedInStatus}/>} />
       </Routes>
     </BrowserRouter>
   );
