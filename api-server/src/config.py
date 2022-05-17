@@ -1,4 +1,5 @@
 import os 
+import datetime
 
 class DevelopmentConfig:
 
@@ -13,5 +14,7 @@ class DevelopmentConfig:
 
     SECRET_KEY = os.getenv('SECRET_KEY')
     JWT_SECRET_KEY = "test_key"
+
+    PERMANENT_SESSION_LIFETIME = datetime.timedelta(minutes=10)
 
 Config = DevelopmentConfig

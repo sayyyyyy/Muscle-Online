@@ -39,6 +39,7 @@ class Room(db.Model):
 
     room_id = db.Column(db.Integer, primary_key=True)
     room_name = db.Column(db.String(255), default="フレンド対戦")
+    room_pass = db.Column(db.String(6), nullable=False)
     is_open = db.Column(db.Boolean, default=False)
 
     to_user_room = db.relationship('User_Room', backref='rooms', lazy=True)
@@ -55,6 +56,7 @@ class User_Room(db.Model):
     user_room_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.room_id'), nullable=False)
+    count = db.Column(db.Integer, default=0)
 
 class User_RoomSchema(ma.Schema):
     class Meta:
@@ -102,7 +104,6 @@ class GameInformation(db.Model):
     game_info = db.Column(db.Integer, nullable=False)
 
     to_match = db.relationship('Match', backref='gameinformations', lazy=True)
-    to_user_data = db.relationship('User_Data', backref='gameinformations', lazy=True)
 
 class GameInformationSchema(ma.Schema):
     class Meta:
@@ -117,9 +118,7 @@ class Match(db.Model):
 
     match_id = db.Column(db.Integer, primary_key=True)
     game_info_id = db.Column(db.Integer, db.ForeignKey('gameinformations.game_info_id'), nullable=False)
-    room_id = db.Column(db.Integer, db.ForeignKey('rooms.room_id'), nullable=False)
-    user1_count = db.Column(db.Integer)
-    user2_count = db.Column(db.Integer)
+    room_id = db.Column(db.Integer, db.ForeignKey('rooms.room_id'))
     winner_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     is_finish = db.Column(db.Boolean, default=False)
     finish_time = db.Column(db.DateTime)
@@ -136,14 +135,13 @@ class User_Data(db.Model):
 
     user_data_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    game_info_id = db.Column(db.Integer, db.ForeignKey('gameinformations.game_info_id'), nullable=False)
     num_of_match = db.Column(db.Integer, default=0)
     num_of_win = db.Column(db.Integer, default=0)
     num_of_lose = db.Column(db.Integer, default=0)
 
 class User_DataSchema(ma.Schema):
     class Meta:
-        fields = ('user_data_id', 'user_id', 'game_info_id', 'num_of_match', 'num_of_win', 'num_of_lose', 'user', 'gameinfo')
+        fields = ('user_data_id', 'user_id', 'num_of_match', 'num_of_win', 'num_of_lose', 'user', 'gameinfo')
     user = ma.Nested(UserSchema, many=False)
     gameinfo = ma.Nested(GameInformationSchema, many=False)
 
