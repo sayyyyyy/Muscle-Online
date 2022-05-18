@@ -30,9 +30,9 @@ const Top = (props) => {
         <Login handleSuccessfulAuthentication={handleSuccessfulAuthentication}/>
         <button onClick={handleLogoutClick}>ログアウト</button> */}
         <br />
-        <button className={classes.buttonStyle}> <Link  className={classes.linkStyle} to="/registration">新規登録</Link></button>
+        <button className={classes.buttonStyle}> <Link  className={classes.linkStyle} to="/signup">新規登録</Link></button>
         <br />
-        <button className={classes.buttonStyle}> <Link to="/login" className={classes.linkStyle}>ログイン</Link></button>
+        <button className={classes.buttonStyle}> <Link to="/signin" className={classes.linkStyle}>ログイン</Link></button>
       </div>
       {/* <div className={classes.backgroundStyle3}></div>
       <div className={classes.backgroundStyle4}></div> */}

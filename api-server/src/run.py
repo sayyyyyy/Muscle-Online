@@ -1,5 +1,4 @@
-from urllib import request
-from flask import Flask, render_template, session, jsonify, redirect, url_for, Response
+from flask import Flask, render_template, session, jsonify, redirect, url_for, Response, request
 from models import db, User, Game, Room, User_Room
 from flask_migrate import Migrate
 import flask_login
@@ -14,11 +13,13 @@ import hashlib
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
 from camera import VideoCamera
+
+
 def create_app():
     app = Flask(__name__)
     CORS(app)
     app.config.from_object('config.Config')
-
+    CORS(app)
     # SQLAlchemy設定
     db.init_app(app)
     Migrate(app, db)
@@ -91,18 +92,51 @@ def isLogin():
 #     time.sleep(5)
 #     return redirect('/main')
 
-@app.route('/signin', methods=['GET', 'POST'])
-def signin():
+# <<<<<<< HEAD
+# @app.route('/signin', methods=['GET', 'POST'])
+# def signin():
+#     if request.method == "POST":
+#         # フロントからデータの受け取り
+#         email = 'test@a.a'
+#         name = 'test'
+#         password = 'password'
+
+#         user = User.query.filter_by(email=email).first()
+#         if user:
+#             print('そのメールアドレスは既に使われています')
+#             return redirect(url_for('signup'))
+
+#         # データベースに保存
+#         new_user = User(name=name, password=hashlib.sha256(password.encode('utf-8')).hexdigest(), email=email)
+#         db.session.add(new_user)
+#         db.session.commit()
+
+#         # jwtでのログイン処理
+#         add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
+#         if not add_user:
+#             return {'code': 400, 'data': {'states': 'ユーザ作成に失敗しました'}}
+#         access_token = create_access_token(add_user.user_id)
+#         add_user.token = access_token
+#         session['user_token'] = access_token
+#         db.session.commit()
+
+#         return {'code': 200, 'data': {'states': 'ユーザ作成に成功しました', 'token': access_token}}
+#         # return redirect(url_for('main'))
+# =======
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
     if request.method == "POST":
+        user_data = request.get_json()
+
         # フロントからデータの受け取り
-        email = 'test@a.a'
-        name = 'test'
-        password = 'password'
+        email = user_data['user']['email']
+        name = user_data['user']['name']
+        password = user_data['user']['password']
 
         user = User.query.filter_by(email=email).first()
         if user:
-            print('そのメールアドレスは既に使われています')
-            return redirect(url_for('signup'))
+            return {'data': {'states': 'そのメールアドレスは既に使用されています'}}
 
         # データベースに保存
         new_user = User(name=name, password=hashlib.sha256(password.encode('utf-8')).hexdigest(), email=email)
@@ -112,33 +146,34 @@ def signin():
         # jwtでのログイン処理
         add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
         if not add_user:
-            return {'code': 400, 'data': {'states': 'ユーザ作成に失敗しました'}}
+            return {'data': {'states': 'ユーザ作成に失敗しました'}}
         access_token = create_access_token(add_user.user_id)
         add_user.token = access_token
         session['user_token'] = access_token
         db.session.commit()
 
-        return {'code': 200, 'data': {'states': 'ユーザ作成に成功しました', 'token': access_token}}
-        # return redirect(url_for('main'))
+        return {'data': {'states': 'ユーザ作成に成功しました', 'token': access_token}}
 
-@app.route('/login')
-def login():
-    # フロントからデータの受け取り
-    email = 'test@a.a'
-    password = 'password'
+@app.route('/signin', methods=['POST'])
+def signin():
+    if request.method == "POST":
+        # フロントからデータの受け取り
+        user_data = request.get_json()
+        email = user_data['user']['email']
+        password = user_data['user']['password']
 
-    # パスワード等が違ったときの処理
-    user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
-    if not user:
-        return {'code': 400, 'data': {'states': 'ユーザーが見つかりません'}}
+        # パスワード等が違ったときの処理
+        user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
+        if not user:
+            return {'data': {'states': 'ユーザーが見つかりません'}}
 
-    # jwtでのログイン処理
-    access_token = create_access_token(user.user_id)
-    session['user_token'] = access_token
-    user.token = access_token
-    db.session.commit()
+        # jwtでのログイン処理
+        access_token = create_access_token(user.user_id)
+        session['user_token'] = access_token
+        user.token = access_token
+        db.session.commit()
 
-    return {'code': 200, 'data': {'states': 'ログインに成功しました', 'token': access_token}}
+        return {'data': {'states': 'ログインに成功しました', 'token': access_token}}
 
 @app.route('/logout')
 def logout():
@@ -221,5 +256,5 @@ def count_down(seconds):
         emit('count', {'count_down': second})
 
 if __name__ == '__main__':
-    socketio.run(app)
-    # app.run()
+    #socketio.run(app)
+    app.run()

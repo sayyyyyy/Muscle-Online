@@ -6,34 +6,30 @@ import classes from './../../../style/page/Signup.module.css'
 
 const Signup= (props) => {
 
+  const [name,setName]=useState("")
   const [email, setEmail]=useState("")
   const [password,setPassword]=useState("")
-  const [passwordConfirmation, setPasswordConfirmation] = useState("")
+  //const [passwordConfirmation, setPasswordConfirmation] = useState("")
 
   //APIに送信
   const handleSubmit =(event)=>{ 
     console.log(email)
+    console.log(name)
     console.log(password)
-<<<<<<< HEAD:front/src/view/pages/auth/Registration.js
     axios.post("http://localhost:5001/signup",
-=======
-    axios.post("http://localhost:5000/signup",
->>>>>>> cee186dfe5fc0b31a07d218e5d73ffed7951a523:front/src/view/pages/auth/Signup.js
     {
       user:{
         email:email,
+        name:name,
         password:password,
-        password_confirmation: passwordConfirmation
       }
     },
     // { withCredentials: true } //cookieを含むか
     ).then(res=>{ //ユーザー作成成功
-        console.log("registration res", res)
-        if(res.data.status==='create'){ //railsのAPIのdata.statasを見て判断する。
-          props.handleSuccessfullAuthentication(res.data) //新規登録画面に飛ぶ(home.jsの関数)
-        }
-        
-       
+        console.log(res.data.data)
+        // if(res.data.status==='create'){ //railsのAPIのdata.statasを見て判断する。
+        //   props.handleSuccessfullAuthentication(res.data) //新規登録画面に飛ぶ(home.jsの関数)
+        // }
     }).catch(err=>{//ユーザー作成失敗
         console.log("registration res", err)
     })
@@ -45,12 +41,21 @@ const Signup= (props) => {
       
       <form className={classes.formStyle} onSubmit={handleSubmit} >
         <h1 className={classes.helloStyle}>ようこそ</h1>
-        <p className={classes.titleStyle}>ユーザー名</p>
+        <p className={classes.titleStyle}>メールアドレス</p>
         <input 
           type="email" 
           name="email" 
           value={email} 
           onChange={event=> setEmail(event.target.value)}
+          className={classes.inputStyle}
+        />
+        <br />
+        <p className={classes.titleStyle}>ユーザー名</p>
+        <input 
+          type="name" 
+          name="name"
+          value={name}
+          onChange={event=> setName(event.target.value)}
           className={classes.inputStyle}
         />
         <br />
@@ -63,16 +68,7 @@ const Signup= (props) => {
           className={classes.inputStyle}
         />
         <br />
-        <p className={classes.titleStyle}>確認用パスワード</p>
-        <input 
-          type="password" 
-          name="password_confirmation" 
-          value={passwordConfirmation}
-          onChange={event=> setPasswordConfirmation(event.target.value)}
-          className={classes.inputStyle}
-        />
-        <br />
-        <button type="submit" className={classes.submitButtonStyle}><Link to="/home" className={classes.linkStyle}>登録</Link></button>
+        <button type="submit" className={classes.submitButtonStyle} onClick={handleSubmit}> <Link to="/home" className={classes.linkStyle}>登録</Link></button>
       </form>
 
       <button className={classes.backButtonStyle}> <Link to="/" className={classes.linkStyle}>戻る</Link></button>
