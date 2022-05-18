@@ -77,52 +77,14 @@ def video_feed():
 @app.route('/main')
 def isLogin():
     if not 'user_token' in session:
-        return {'code': 200, 'data': {'states': 'ログインしていません(user_tokenもない)'}}
+        return {'code': 0, 'data': {'states': 'ログインしていません(user_tokenもない)'}}
 
     user = User.query.filter_by(token=session['user_token']).first()
     
     if not user:
-        return {'code': 200, 'data': {'states': 'ログインしていません'}}
+        return {'code': 1, 'data': {'states': 'ログインしていません'}}
     
-    return {'code': 200, 'data': {'states': 'ログインしています'}}
-
-# @app.route('/<others>')
-# def no_url(others):
-#     print(others + 'というURLはありません。\n5秒後に遷移します')
-#     time.sleep(5)
-#     return redirect('/main')
-
-# <<<<<<< HEAD
-# @app.route('/signin', methods=['GET', 'POST'])
-# def signin():
-#     if request.method == "POST":
-#         # フロントからデータの受け取り
-#         email = 'test@a.a'
-#         name = 'test'
-#         password = 'password'
-
-#         user = User.query.filter_by(email=email).first()
-#         if user:
-#             print('そのメールアドレスは既に使われています')
-#             return redirect(url_for('signup'))
-
-#         # データベースに保存
-#         new_user = User(name=name, password=hashlib.sha256(password.encode('utf-8')).hexdigest(), email=email)
-#         db.session.add(new_user)
-#         db.session.commit()
-
-#         # jwtでのログイン処理
-#         add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
-#         if not add_user:
-#             return {'code': 400, 'data': {'states': 'ユーザ作成に失敗しました'}}
-#         access_token = create_access_token(add_user.user_id)
-#         add_user.token = access_token
-#         session['user_token'] = access_token
-#         db.session.commit()
-
-#         return {'code': 200, 'data': {'states': 'ユーザ作成に成功しました', 'token': access_token}}
-#         # return redirect(url_for('main'))
-# =======
+    return {'code': 1, 'data': {'states': 'ログインしています'}}
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -130,13 +92,22 @@ def signup():
         user_data = request.get_json()
 
         # フロントからデータの受け取り
+        if not user_data['user']['email']:
+            return {'code': 0, 'data': {'states': 'emailが入力されていません'}}
+
+        if not user_data['user']['name']:
+            return {'code': 0, 'data': {'states': 'nameが入力されていません'}}
+
+        if not user_data['user']['password']:
+            return {'code': 0, 'data': {'states': 'passwordが入力されていません'}}
+
         email = user_data['user']['email']
         name = user_data['user']['name']
         password = user_data['user']['password']
 
         user = User.query.filter_by(email=email).first()
         if user:
-            return {'data': {'states': 'そのメールアドレスは既に使用されています'}}
+            return {'code': 0, 'data': {'states': 'そのメールアドレスは既に使用されています'}}
 
         # データベースに保存
         new_user = User(name=name, password=hashlib.sha256(password.encode('utf-8')).hexdigest(), email=email)
@@ -152,20 +123,30 @@ def signup():
         session['user_token'] = access_token
         db.session.commit()
 
-        return {'data': {'states': 'ユーザ作成に成功しました', 'token': access_token}}
+        return {'code': 1, 'data': {'states': 'ユーザ作成に成功しました', 'token': access_token}}
+    else:
+        return {'code': 0, 'data': {'無効なHTTPメソッドです'}}
+
 
 @app.route('/signin', methods=['POST'])
 def signin():
     if request.method == "POST":
         # フロントからデータの受け取り
         user_data = request.get_json()
+
+        if not user_data['user']['email']:
+            return {'code': 0, 'data': {'states': 'emailが入力されていません'}}
+
+        if not user_data['user']['password']:
+            return {'code': 0, 'data': {'states': 'passwordが入力されていません'}}
+
         email = user_data['user']['email']
         password = user_data['user']['password']
 
         # パスワード等が違ったときの処理
         user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
         if not user:
-            return {'data': {'states': 'ユーザーが見つかりません'}}
+            return {'code': 0, 'data': {'states': 'ユーザーが見つかりません'}}
 
         # jwtでのログイン処理
         access_token = create_access_token(user.user_id)
@@ -173,13 +154,15 @@ def signin():
         user.token = access_token
         db.session.commit()
 
-        return {'data': {'states': 'ログインに成功しました', 'token': access_token}}
+        return {'code': 1, 'data': {'states': 'ログインに成功しました', 'token': access_token}}
+    else:
+        return {'code': 0, 'data': {'無効なHTTPメソッドです'}}
 
 @app.route('/logout')
 def logout():
     response = jsonify({'msg': 'logout success'})
     unset_jwt_cookies(response)
-    return {'code': 200, 'data': {'states': 'ログアウトに成功しました'}}
+    return {'code': 1, 'data': {'states': 'ログアウトに成功しました'}}
 
 @app.route('/add_data')
 def add_data():
@@ -190,10 +173,7 @@ def add_data():
     initial_data.add_rankinginfo(1)
 
     game = Game().query.filter_by().first()
-    print(game)
-    print(game.name)
-    print(game.description)
-    return 'test'
+    return {'code': 1, 'data': {'states': 'データを追加しました'}}
 
 
 @login_manager.user_loader
