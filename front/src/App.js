@@ -2,6 +2,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {useState,useEffect} from "react"
 import axios from "axios";
 
+import Login from './view/components/Login'
+import Profile from './view/components/Profile'
+import Header from './view/components/Header'
+import useToken from './view/components/useToken'
+
 import Top from "./view/pages/Top";
 import Signup from "./view/pages/auth/Signup";
 import Signin from "./view/pages/auth/Signin";
@@ -9,10 +14,11 @@ import Home from "./view/pages/Home";
 import Battlelog from "./view/pages/Buttlelog"
 import Mypage from "./view/pages/Mypage"
 
-const App = (props) => {
 
-  const [loggedInStatus,setLoggedInStatus]=useState("未ログイン") //ユーザーのログイン状態を参照
-  const [user, setUser] = useState({})//ユーザーをログインさせる際に必要
+const App = (props) => {
+  const { token, removeToken, setToken } = useToken();
+  //const [loggedInStatus,setLoggedInStatus]=useState("未ログイン") //ユーザーのログイン状態を参照
+  //const [user, setUser] = useState({})//ユーザーをログインさせる際に必要
 
   // const handleLogin=(data)=>{
   //   setLoggedInStatus("現在ログインしております") //ログインして or いないの文章をここで変換
@@ -40,12 +46,18 @@ const App = (props) => {
     <BrowserRouter>
       <Routes>
         <Route path={`/`} element={<Top />} />
-        {/* <Route path={`/dashboard/`} element={<Dashboard {...props} loggedInStatus={loggedInStatus} />} /> */}
         <Route path={`/signup`} element={<Signup />}/>
-        <Route path={`/signin`} element={<Signin />}/>
-        <Route path={`/home`}  element={ <Home  />}/>
-        <Route path={`/battlelog`}  element={ <Battlelog /> }/>
-        <Route path={`/mypage`}  element={ <Mypage />} />
+        <Route path={`/signin`} element={<Signin setToken={setToken}/>}/>
+     {/* トークンがない場合 */}
+        {!token && token!=="" &&token!== undefined?  
+        <Route path={`/signin`} element={<Signin setToken={setToken}/>}/>
+        :(
+          <>
+              <Route path={`/home`}  element={ <Home  token={token} />}/>
+              <Route path={`/battlelog`}  element={ <Battlelog token={token} setToken={setToken}/> }/>
+              <Route path={`/mypage`}  element={ <Mypage token={token}  />} />
+          </>
+        )}
       </Routes>
     </BrowserRouter>
   );
