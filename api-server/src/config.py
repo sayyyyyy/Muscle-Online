@@ -14,6 +14,9 @@ class DevelopmentConfig:
 
     SECRET_KEY = os.getenv('SECRET_KEY')
 
-    PERMANENT_SESSION_LIFETIME = datetime.timedelta(minutes=10)
+    PERMANENT_SESSION_LIFETIME = datetime.timedelta(minutes=30)
+
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
+    JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(hours=1)
 
 Config = DevelopmentConfig
