@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session, jsonify, redirect, url_for
-from models import db, User, Game
+from models import db, User, Game, Room, User_Room
 from flask_migrate import Migrate
 import flask_login
 import initial_data
@@ -61,28 +61,26 @@ def isLogin():
 
 @app.route('/signin')
 def signin():
+
+    # フロントからデータの受け取り
     email = 'test@a.a'
     name = 'test'
     password = 'password'
 
     user = User.query.filter_by(email=email).first()
-
     if user:
         print('そのメールアドレスは既に使われています')
         return redirect(url_for('signup'))
 
+    # データベースに保存
     new_user = User(name=name, password=hashlib.sha256(password.encode('utf-8')).hexdigest(), email=email)
-    
     db.session.add(new_user)
     db.session.commit()
 
+    # jwtでのログイン処理
     add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
-
     if not add_user:
-        print('追加に失敗しました')
-        return '追加に失敗しました'
-        # return redirect('/signup')
-
+        return {'code': 400, 'data': {'states': 'ユーザ作成に失敗しました'}}
     access_token = create_access_token(add_user.user_id)
     add_user.token = access_token
     session['user_token'] = access_token
@@ -92,17 +90,18 @@ def signin():
 
 @app.route('/login')
 def create_token():
+    # フロントからデータの受け取り
     email = 'test@a.a'
     password = 'password'
 
     # パスワード等が違ったときの処理
     user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
-
     if not user:
-        return {'code': 400, 'data': {'states': 'ユーザー名が見つかりません'}}
+        return {'code': 400, 'data': {'states': 'ユーザーが見つかりません'}}
+
+    # jwtでのログイン処理
     access_token = create_access_token(user.user_id)
     session['user_token'] = access_token
-
     user.token = access_token
     db.session.commit()
 
@@ -138,12 +137,12 @@ def join(message):
 
     # ルームに入る側
     if message['room_pass']:
-        room = models.Room.query.filter_by(room_pass=message['room_pass'], is_open=1).first()
+        room = Room.query.filter_by(room_pass=message['room_pass'], is_open=1).first()
         if not room:
             emit('return', {'code': 'error', 'state': 'Not exist Room'})
             return 0
 
-        add_user_room = models.User_Room(user_id=flask_login.current_user.user_id, room_id=room.room_id)
+        add_user_room = User_Room(user_id=flask_login.current_user.user_id, room_id=room.room_id)
         db.session.add(add_user_room)
 
         session['room_pass'] = message['room_pass']
@@ -157,16 +156,16 @@ def join(message):
             emit('return', {'code': 'error', 'state': 'Not Room Pass'})
             return 0
 
-        room = models.Room.query.filter_by(room_pass=session['room_pass'], is_open=1).first()
+        room = Room.query.filter_by(room_pass=session['room_pass'], is_open=1).first()
         if not room:
             emit('return', {'code': 'error', 'state': 'Not exist Room'})
             return 0        
         join_room(room.room_id)
     
-    user_room = models.User_Room.query.filter_by(room_id=room.room_id).all()
+    user_room = User_Room.query.filter_by(room_id=room.room_id).all()
     user_list = {}
     for num, user in enumerate(user_room):
-        user_data = models.User.query.filter_by(user_id=user.user_id).first()
+        user_data = User.query.filter_by(user_id=user.user_id).first()
         user_list[num] = {'name': user_data.name}
 
     emit('return', {'user_list': user_list, 'room_pass': session['room_pass']})
