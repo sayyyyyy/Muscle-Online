@@ -17,6 +17,7 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(255), nullable=False)
     password = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False)
+    token = db.Column(db.String(511))
     is_change_password = db.Column(db.Boolean, default=False)
 
 

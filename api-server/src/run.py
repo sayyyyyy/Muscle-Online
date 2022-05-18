@@ -1,17 +1,17 @@
-from flask import Flask, render_template, session, Response
-from models import db, User, Game
+from flask import Flask, render_template, session, jsonify, redirect, url_for, Response
+from models import db, User, Game, Room, User_Room
 from flask_migrate import Migrate
 import flask_login
 import initial_data
 from flask_socketio import SocketIO, emit, join_room
-from user import user_bp
+# from user import user_bp
 from room import room_bp
 from history import history_bp
-import models
 import time
 from flask_cors import CORS
-from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
-# from camera import VideoCamera
+import hashlib
+from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
+                               unset_jwt_cookies, jwt_required, JWTManager
 
 def create_app():
     app = Flask(__name__)
@@ -38,11 +38,12 @@ def after_request(response):
   response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
   return response
 
-app.register_blueprint(user_bp)
+# app.register_blueprint(user_bp)
 app.register_blueprint(room_bp)
 app.register_blueprint(history_bp)
 
 socketio = SocketIO(app)
+jwt = JWTManager(app)
 
 @app.route('/')
 def test():
@@ -72,17 +73,77 @@ def video_feed():
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/main')
-@flask_login.login_required
-def main_isLogin():
-    user_room = models.User_Room.query.filter_by(room_id=7).all()
-    print(type(user_room))
-    print(user_room)
-    return 'ログインしています'
+def isLogin():
+    if not 'user_token' in session:
+        return {'code': 200, 'data': {'states': 'ログインしていません(user_tokenもない)'}}
 
-@login_manager.unauthorized_handler
-def main_isntLogin():
-    return 'ログインしていません'
+    user = User.query.filter_by(token=session['user_token']).first()
+    
+    if not user:
+        return {'code': 200, 'data': {'states': 'ログインしていません'}}
+    
+    return {'code': 200, 'data': {'states': 'ログインしています'}}
 
+# @app.route('/<others>')
+# def no_url(others):
+#     print(others + 'というURLはありません。\n5秒後に遷移します')
+#     time.sleep(5)
+#     return redirect('/main')
+
+@app.route('/signin')
+def signin():
+
+    # フロントからデータの受け取り
+    email = 'test@a.a'
+    name = 'test'
+    password = 'password'
+
+    user = User.query.filter_by(email=email).first()
+    if user:
+        print('そのメールアドレスは既に使われています')
+        return redirect(url_for('signup'))
+
+    # データベースに保存
+    new_user = User(name=name, password=hashlib.sha256(password.encode('utf-8')).hexdigest(), email=email)
+    db.session.add(new_user)
+    db.session.commit()
+
+    # jwtでのログイン処理
+    add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
+    if not add_user:
+        return {'code': 400, 'data': {'states': 'ユーザ作成に失敗しました'}}
+    access_token = create_access_token(add_user.user_id)
+    add_user.token = access_token
+    session['user_token'] = access_token
+    db.session.commit()
+
+    return {'code': 200, 'data': {'states': 'ユーザ作成に成功しました', 'token': access_token}}
+    # return redirect(url_for('main'))
+
+@app.route('/login')
+def login():
+    # フロントからデータの受け取り
+    email = 'test@a.a'
+    password = 'password'
+
+    # パスワード等が違ったときの処理
+    user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
+    if not user:
+        return {'code': 400, 'data': {'states': 'ユーザーが見つかりません'}}
+
+    # jwtでのログイン処理
+    access_token = create_access_token(user.user_id)
+    session['user_token'] = access_token
+    user.token = access_token
+    db.session.commit()
+
+    return {'code': 200, 'data': {'states': 'ログインに成功しました', 'token': access_token}}
+
+@app.route('/logout')
+def logout():
+    response = jsonify({'msg': 'logout success'})
+    unset_jwt_cookies(response)
+    return {'code': 200, 'data': {'states': 'ログアウトに成功しました'}}
 
 @app.route('/add_data')
 def add_data():
@@ -109,12 +170,12 @@ def join(message):
 
     # ルームに入る側
     if message['room_pass']:
-        room = models.Room.query.filter_by(room_pass=message['room_pass'], is_open=1).first()
+        room = Room.query.filter_by(room_pass=message['room_pass'], is_open=1).first()
         if not room:
             emit('return', {'code': 'error', 'state': 'Not exist Room'})
             return 0
 
-        add_user_room = models.User_Room(user_id=flask_login.current_user.user_id, room_id=room.room_id)
+        add_user_room = User_Room(user_id=flask_login.current_user.user_id, room_id=room.room_id)
         db.session.add(add_user_room)
 
         session['room_pass'] = message['room_pass']
@@ -128,24 +189,24 @@ def join(message):
             emit('return', {'code': 'error', 'state': 'Not Room Pass'})
             return 0
 
-        room = models.Room.query.filter_by(room_pass=session['room_pass'], is_open=1).first()
+        room = Room.query.filter_by(room_pass=session['room_pass'], is_open=1).first()
         if not room:
             emit('return', {'code': 'error', 'state': 'Not exist Room'})
             return 0        
         join_room(room.room_id)
     
-    user_room = models.User_Room.query.filter_by(room_id=room.room_id).all()
+    user_room = User_Room.query.filter_by(room_id=room.room_id).all()
     user_list = {}
     for num, user in enumerate(user_room):
-        user_data = models.User.query.filter_by(user_id=user.user_id).first()
+        user_data = User.query.filter_by(user_id=user.user_id).first()
         user_list[num] = {'name': user_data.name}
 
     emit('return', {'user_list': user_list, 'room_pass': session['room_pass']})
 
-@login_manager.unauthorized_handler
-def not_login_join():
-    emit('return', {'code': 'error', 'state': 'Not Login'})
-    return 0
+# @login_manager.unauthorized_handler
+# def not_login_join():
+#     emit('return', {'code': 'error', 'state': 'Not Login'})
+#     return 0
 
 
 @socketio.on('leave')
