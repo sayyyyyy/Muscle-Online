@@ -1,3 +1,4 @@
+from urllib import request
 from flask import Flask, render_template, session, jsonify, redirect, url_for, Response
 from models import db, User, Game, Room, User_Room
 from flask_migrate import Migrate
@@ -12,7 +13,7 @@ from flask_cors import CORS
 import hashlib
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
-
+from camera import VideoCamera
 def create_app():
     app = Flask(__name__)
     CORS(app)
@@ -90,35 +91,35 @@ def isLogin():
 #     time.sleep(5)
 #     return redirect('/main')
 
-@app.route('/signin')
+@app.route('/signin', methods=['GET', 'POST'])
 def signin():
+    if request.method == "POST":
+        # フロントからデータの受け取り
+        email = 'test@a.a'
+        name = 'test'
+        password = 'password'
 
-    # フロントからデータの受け取り
-    email = 'test@a.a'
-    name = 'test'
-    password = 'password'
+        user = User.query.filter_by(email=email).first()
+        if user:
+            print('そのメールアドレスは既に使われています')
+            return redirect(url_for('signup'))
 
-    user = User.query.filter_by(email=email).first()
-    if user:
-        print('そのメールアドレスは既に使われています')
-        return redirect(url_for('signup'))
+        # データベースに保存
+        new_user = User(name=name, password=hashlib.sha256(password.encode('utf-8')).hexdigest(), email=email)
+        db.session.add(new_user)
+        db.session.commit()
 
-    # データベースに保存
-    new_user = User(name=name, password=hashlib.sha256(password.encode('utf-8')).hexdigest(), email=email)
-    db.session.add(new_user)
-    db.session.commit()
+        # jwtでのログイン処理
+        add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
+        if not add_user:
+            return {'code': 400, 'data': {'states': 'ユーザ作成に失敗しました'}}
+        access_token = create_access_token(add_user.user_id)
+        add_user.token = access_token
+        session['user_token'] = access_token
+        db.session.commit()
 
-    # jwtでのログイン処理
-    add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
-    if not add_user:
-        return {'code': 400, 'data': {'states': 'ユーザ作成に失敗しました'}}
-    access_token = create_access_token(add_user.user_id)
-    add_user.token = access_token
-    session['user_token'] = access_token
-    db.session.commit()
-
-    return {'code': 200, 'data': {'states': 'ユーザ作成に成功しました', 'token': access_token}}
-    # return redirect(url_for('main'))
+        return {'code': 200, 'data': {'states': 'ユーザ作成に成功しました', 'token': access_token}}
+        # return redirect(url_for('main'))
 
 @app.route('/login')
 def login():
