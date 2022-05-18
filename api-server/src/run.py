@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session, jsonify, redirect, url_for, Response, request
-from models import db, User, Game, Room, User_Room
+from models import db, User, Game, Room, User_Room, User_Data
 from flask_migrate import Migrate
 import flask_login
 import initial_data
@@ -118,6 +118,11 @@ def signup():
         add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
         if not add_user:
             return {'data': {'states': 'ユーザ作成に失敗しました'}}
+
+        new_user_data = User_Data(user_id=add_user.user_id)
+        db.session.add(new_user_data)
+        db.session.commit()
+        
         access_token = create_access_token(add_user.user_id)
         add_user.token = access_token
         session['user_token'] = access_token
