@@ -11,6 +11,7 @@ const Battlelog=(props)=>{
             }
             ).then(res=>{
                 console.log(1)
+                console.log(res)
             }
             ).catch(res=>{
                 console.log(2)

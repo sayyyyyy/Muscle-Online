@@ -20,8 +20,7 @@ const Signin= (props) => {
       }
     }
     ).then(res=>{ //ユーザー作成成功
-        props.setToken(res.data.data.access_token)
-        console.log(res.data)
+        props.setToken(res.data.data.token)//josnからtoken取得
         if (res.data.code===1){
           navigate('/home')
         }
