@@ -9,11 +9,30 @@ def history():
         user_data = request.get_json()
 
         if not user_data['user_token']:
-            return {'code': 0, 'data': {'states': 'tokenが渡されていません'}}   
-        user_data = models.User_Data.query.filter_by(token=user_data['user_token']).first()
-        
+            return {'code': 0, 'data': {'states': 'tokenが渡されていません'}}  
+
+        user = models.User.query.filter_by(token=user_data['user_token']).first()
+        if not user:
+             return {'code': 0, 'data': {'states': 'ユーザが見つかりません'}}
+
+        user_data = models.User_Data.query.filter_by(user_id=user.user_id).first()
         if not user_data:
             return {'code': 0, 'data': {'states': 'ユーザデータが見つかりません'}}
+
+        # user_room = models.User_Room.query.filter_by(user_id=user.user_id).all()
+
+        # if not user_room:
+        #     return {'code': 0, 'data': {'states': '対戦履歴がありません'}}
+        
+        # room_list = []
+        # for i in user_room:
+        #     room = models.Room.query.filter_by(room_id = i.room_id).first()
+        #     room_list.qppend(room)
+
+        # match_list = []
+        # for i in room_list:
+        #     match = models.Match.query.filter_by(room_id = i.room_id)
+        #     match_list.append(match_list)
         
         return_data = {'match': user_data.num_of_match,
                         'win': user_data.num_of_win,
