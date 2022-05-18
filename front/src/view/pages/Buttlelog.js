@@ -3,11 +3,12 @@ import { useEffect } from "react"
 import axios from "axios"
 
 const Battlelog=(props)=>{
+
     useEffect(()=>{
         const gethistory=async()=>{
             const res =await axios.post("http://localhost:5001/history",
             {
-                user_token:props.token
+                user_token:props.token,
             }
             ).then(res=>{
                 console.log(1)

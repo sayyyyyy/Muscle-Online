@@ -26,6 +26,7 @@ const Signup= (props) => {
     },
     // { withCredentials: true } //cookieを含むか
     ).then(res=>{ //ユーザー作成成功
+        props.setToken(res.data.data.token)
         console.log(res.data.data)
         // if(res.data.status==='create'){ //railsのAPIのdata.statasを見て判断する。
         //   props.handleSuccessfullAuthentication(res.data) //新規登録画面に飛ぶ(home.jsの関数)
