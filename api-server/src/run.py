@@ -84,12 +84,13 @@ def signin():
     access_token = create_access_token(add_user.user_id)
     add_user.token = access_token
     session['user_token'] = access_token
+    db.session.commit()
 
     return {'code': 200, 'data': {'states': 'ユーザ作成に成功しました', 'token': access_token}}
     # return redirect(url_for('main'))
 
 @app.route('/login')
-def create_token():
+def login():
     # フロントからデータの受け取り
     email = 'test@a.a'
     password = 'password'
