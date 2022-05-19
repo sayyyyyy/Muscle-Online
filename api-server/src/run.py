@@ -17,21 +17,26 @@ from camera import VideoCamera
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
     app.config.from_object('config.Config')
-    CORS(app)
+
     # SQLAlchemy設定
     db.init_app(app)
     Migrate(app, db)
     
-
     return app
 
 
 app = create_app()
+jwt = JWTManager(app)
+socketio = SocketIO(app)
+
+# flask-login設定　後で削除する
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
-jwt = JWTManager(app)
+
+
+# CORS設定
+CORS(app)
 
 @app.after_request
 def after_request(response):
@@ -40,12 +45,9 @@ def after_request(response):
   response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
   return response
 
-# app.register_blueprint(user_bp)
+# Blueprint設定
 app.register_blueprint(room_bp)
 app.register_blueprint(history_bp)
-
-socketio = SocketIO(app)
-jwt = JWTManager(app)
 
 @app.route('/')
 def test():
@@ -117,8 +119,9 @@ def signup():
         # jwtでのログイン処理
         add_user = User.query.filter_by(email=email, password=hashlib.sha256(password.encode('utf-8')).hexdigest()).first()
         if not add_user:
-            return {'data': {'states': 'ユーザ作成に失敗しました'}}
+            return {'code': 0, 'data': {'states': 'ユーザ作成に失敗しました'}}
 
+        # User_Dataテーブルの追加
         new_user_data = User_Data(user_id=add_user.user_id)
         db.session.add(new_user_data)
         db.session.commit()
