@@ -11,7 +11,7 @@ import Top from "./view/pages/Top";
 import Signup from "./view/pages/auth/Signup";
 import Signin from "./view/pages/auth/Signin";
 import Home from "./view/pages/Home";
-import Battlelog from "./view/pages/Buttlelog"
+import Battlelog from "./view/pages/Battlelog"
 import Mypage from "./view/pages/Mypage"
 
 
@@ -54,7 +54,7 @@ const App = (props) => {
         :(
           <>
               <Route path={`/home`}  element={ <Home  token={token} />}/>
-              <Route path={`/battlelog`}  element={ <Battlelog token={token} setToken={setToken}/> }/>
+              <Route path={`/battlelog`}  element={ <Battlelog token={token} /> }/>
               <Route path={`/mypage`}  element={ <Mypage token={token}  />} />
           </>
         )}

@@ -22,6 +22,8 @@ const Signin= (props) => {
     ).then(res=>{ //ユーザー作成成功
         props.setToken(res.data.data.token)//josnからtoken取得
         if (res.data.code===1){
+          console.log("ログイン成功しました")
+          console.log(res.data.data.token)
           navigate('/home')
         }
     }).catch(err=>{//ユーザー作成失敗
