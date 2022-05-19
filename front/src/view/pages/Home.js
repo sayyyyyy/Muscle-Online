@@ -2,8 +2,10 @@ import Footer from "../components/Footer";
 import classes from "./../../style/page/Home.module.css"
 import Modal from "./../components/Modal"
 import { useState } from "react";
-const Home=()=>{
+import useToken from './../components/useToken'
 
+const Home=()=>{
+  const { token} = useToken();
   const [showModal, setShowModal]=useState(false);
 
   const openModal=()=>{
@@ -16,7 +18,7 @@ const Home=()=>{
       <button className={classes.button} onClick={openModal}>
        <img src={`${process.env.PUBLIC_URL}/img/roombattle1.png`} alt="ルームボタン" className={classes.roomimg} />
       </button>
-      <Modal showFlag={showModal} setShowModal={setShowModal}/>
+      <Modal showFlag={showModal} setShowModal={setShowModal} token={token}/>
 
 
       <button className={classes.ratebutton}>

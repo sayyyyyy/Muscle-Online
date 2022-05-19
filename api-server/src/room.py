@@ -15,7 +15,7 @@ def create_room():
         if not data['user_token']:
             return {'code': 0, 'data': {'states': 'tokenが渡されていません'}} 
 
-        user = User.query.filter_by(token=data['user_Token']).first()
+        user = User.query.filter_by(token=data['user_token']).first()
         if not user:
             return {'code': 0, 'data': {'states': 'ユーザが見つかりませんでした'}} 
 

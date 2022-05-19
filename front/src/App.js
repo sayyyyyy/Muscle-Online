@@ -2,9 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {useState,useEffect} from "react"
 import axios from "axios";
 
-import Login from './view/components/Login'
-import Profile from './view/components/Profile'
-import Header from './view/components/Header'
 import useToken from './view/components/useToken'
 
 import Top from "./view/pages/Top";
