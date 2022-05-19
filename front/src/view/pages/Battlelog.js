@@ -15,12 +15,14 @@ const Battlelog=(props)=>{
                 user_token:props.token,
             }
             ).then(res=>{
-                console.log(1)
-                console.log(2)
-                setUserlog(res.data.data.user_data)
-                console.log(3)
-                console.log(userlog)
-                console.log(res)
+                if (res.data.code===1){
+                    console.log("対戦ログを取得しました")
+                    setUserlog(res.data.data.user_data)
+                    console.log(res.data.data.user_data)
+                }
+                else{
+                    console.log(res.data.data.states)
+                }
             }
             ).catch(res=>{
                 console.log(2)
