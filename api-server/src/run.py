@@ -1,7 +1,6 @@
 from flask import Flask, render_template, session, jsonify, redirect, url_for, Response, request
 from models import db, User, Game, Room, User_Room, User_Data
 from flask_migrate import Migrate
-import flask_login
 import initial_data
 from flask_socketio import SocketIO, emit, join_room
 # from user import user_bp
@@ -29,8 +28,6 @@ def create_app():
 
 
 app = create_app()
-login_manager = flask_login.LoginManager()
-login_manager.init_app(app)
 jwt = JWTManager(app)
 
 @app.after_request
@@ -180,40 +177,48 @@ def add_data():
     game = Game().query.filter_by().first()
     return {'code': 1, 'data': {'states': 'データを追加しました'}}
 
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
 @socketio.on('join', namespace='/room')
-@flask_login.login_required
-def join(message):
-
+def join(data):
     # ルームに入る側
-    if message['room_pass']:
-        room = Room.query.filter_by(room_pass=message['room_pass'], is_open=1).first()
+    if data['room_pass']:
+        room_pass = data['room_pass']
+        
+        room = Room.query.filter_by(room_pass=room_pass, is_open=1).first()
         if not room:
-            emit('return', {'code': 'error', 'state': 'Not exist Room'})
+            emit('return', {'code': 0, 'data': {'state': 'Not exist Room'}})
             return 0
 
-        add_user_room = User_Room(user_id=flask_login.current_user.user_id, room_id=room.room_id)
+        if not data['user_token']:
+            return {'code': 0, 'data': {'states': 'user_Tokenが渡されていません'}}
+        
+        user = User.query.filter_by(token=data['user_token']).first()
+        if not user:
+            return {'code': 0, 'data': {'states': 'ユーザが見つかりません'}}
+
+        add_user_room = User_Room(user_id=user.user_id, room_id=room.room_id)
         db.session.add(add_user_room)
 
-        session['room_pass'] = message['room_pass']
-        join_room(session['room_pass'])
-
+        access_token = create_access_token(room_pass)
+        room.token = access_token
         room.is_open = 0
         db.session.commit()
+
+        join_room(access_token)
     # ルームを作る側
     else:
-        if not 'room_pass' in session:
+        if data['room_pass']:
             emit('return', {'code': 'error', 'state': 'Not Room Pass'})
             return 0
 
-        room = Room.query.filter_by(room_pass=session['room_pass'], is_open=1).first()
+        room_pass = data['room_pass']
+        room = Room.query.filter_by(room_pass=room_pass, is_open=1).first()
         if not room:
-            emit('return', {'code': 'error', 'state': 'Not exist Room'})
-            return 0        
+            emit('return', {'code': 0, 'data': {'state': 'Not exist Room'}})
+            return 0
+
+        access_token = create_access_token(room_pass)
+        room.token = access_token
+        db.session.commit()     
         join_room(room.room_id)
     
     user_room = User_Room.query.filter_by(room_id=room.room_id).all()
@@ -223,11 +228,6 @@ def join(message):
         user_list[num] = {'name': user_data.name}
 
     emit('return', {'user_list': user_list, 'room_pass': session['room_pass']})
-
-# @login_manager.unauthorized_handler
-# def not_login_join():
-#     emit('return', {'code': 'error', 'state': 'Not Login'})
-#     return 0
 
 
 @socketio.on('leave')
