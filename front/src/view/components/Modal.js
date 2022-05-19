@@ -20,6 +20,7 @@ const Modal=(props)=>{
         },
         // { withCredentials: true } //cookieを含むか
         ).then(res=>{ //ユーザー作成成功
+            console.log(res)
            console.log("ルームに参加")
         }).catch(err=>{//ユーザー作成失敗
             console.log("registration res", err)
@@ -37,6 +38,7 @@ const Modal=(props)=>{
         },
         // { withCredentials: true } //cookieを含むか
         ).then(res=>{ //ユーザー作成成功
+            console.log(res)
            console.log("ルームに作成")
         }).catch(err=>{//ユーザー作成失敗
             console.log("registration res", err)
