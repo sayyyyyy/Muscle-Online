@@ -36,6 +36,7 @@ const Modal=(props)=>{
                     </div>
                     <hr className={classes.hr}/>
                     {JoinRoom === true?
+                     //ルームに参加する画面
                     (
                         <div>
                             <form onSubmit={handleSubmit}>
@@ -59,6 +60,7 @@ const Modal=(props)=>{
                             </form>
                         </div>
                     ):
+                    //ルームの作成画面
                     (
                         <div>
                             ルームの作成
