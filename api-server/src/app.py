@@ -6,7 +6,6 @@ import hashlib
 from camera import VideoCamera
 from flask_jwt_extended import create_access_token
 
-from run import socketio
 from models import db, User, Game, Room, User_Room, User_Data
 
 app_bp = Blueprint('app_bp', __name__)
@@ -63,15 +62,3 @@ def add_data():
 
     game = Game().query.filter_by().first()
     return {'code': 1, 'data': {'states': 'データを追加しました'}}
-
-
-
-def send_message():
-    pass
-    
-
-def count_down(seconds):
-    for second in range(1, seconds):
-        time.sleep(1)
-        print(second)
-        emit('count', {'count_down': second})
