@@ -21,10 +21,11 @@
                 if (room_pass){
                     socket.emit('join', {'user_token': user_token, 'room_pass': room_pass});
                 } else {
-                    socket.emit('join', {'user_token': user_token, 'room_pass': room_token});
+                    socket.emit('join', {'user_token': user_token, 'room_token': room_token});
                 }
             });
             
+            // dataにカウントや秒数などのデータが入っている
             socket.on('return', function(data) {
                 console.log(data);
             });
