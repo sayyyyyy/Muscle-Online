@@ -1,0 +1,10 @@
+.totalResult{
+    background-color: orange;
+    display: flex;
+}
+.totalResultWinText{
+    color:white
+}
+.t{
+    color:white
+}
