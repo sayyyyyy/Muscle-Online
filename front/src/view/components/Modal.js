@@ -1,6 +1,7 @@
 import classes from "./../../style/components/Modal.module.css"
 import {useState} from "react"
 import axios from "axios"
+import socketIOClient from "socket.io-client";
 
 const Modal=(props)=>{
 
@@ -10,8 +11,9 @@ const Modal=(props)=>{
     const [roomPass,setRoomPass]=useState("")
     const [roomName,setRoomName]=useState("")
 
+    const socket = socketIOClient('http://localhost:5001/room');
 
-    //ルームの作成ボタン
+    //ルームの参加ボタン
     const joinRoomButton=(event)=>{ 
         axios.post("http://localhost:5001/search_room",
         {
@@ -21,7 +23,23 @@ const Modal=(props)=>{
         // { withCredentials: true } //cookieを含むか
         ).then(res=>{ //ユーザー作成成功
             console.log(res)
-           console.log("ルームに参加")
+            console.log("ルームに参加")
+            if (res.data.code===1){
+                socket.on('connect', function() {
+                    let room_token = "";
+                    let room_pass = roomPass;
+                    let user_token = props.token;
+                    if (room_pass){
+                        socket.emit('join', {'user_token': user_token, 'room_pass': room_pass});
+                    }
+                    else {
+                        socket.emit('join', {'user_token': user_token, 'room_token': room_token});
+                    }
+                    socket.on('return', function(data) {
+                        console.log(data);
+                    });
+                }) 
+            }
         }).catch(err=>{//ユーザー作成失敗
             console.log("registration res", err)
             console.log("ルームに参加することができませんでした")
