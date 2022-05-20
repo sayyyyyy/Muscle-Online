@@ -1,6 +1,5 @@
 from flask import Blueprint, session, request, redirect
 from flask_jwt_extended import create_access_token
-from flask_socketio import join_room
 import random
 import string
 from models import Room, db, User_Room, Match, User
@@ -17,13 +16,13 @@ def create_room():
         if not data['user_token']:
             return {'code': 0, 'data': {'states': 'tokenが渡されていません'}} 
 
-        user = User.query.filter_by(token=data['user_Token']).first()
+        user = User.query.filter_by(token=data['user_token']).first()
         if not user:
             return {'code': 0, 'data': {'states': 'ユーザが見つかりませんでした'}} 
 
 
         if data['room_name']:
-            room_name = room['room_name']
+            room_name = data['room_name']
         else:
             room_name = 'テスト部屋'
 
@@ -63,13 +62,12 @@ def create_room():
 @room_bp.route('/search_room', methods=['GET', 'POST'])
 def search_room():
     if request.method == "POST":
-        session['room_pass'] = ''
         data = request.get_json()
         
         if not data['user_token']:
             return {'code': 0, 'data': {'states': 'tokenが渡されていません'}} 
 
-        user = User.query.filter_by(token=data['user_Token']).first()
+        user = User.query.filter_by(token=data['user_token']).first()
         if not user:
             return {'code': 0, 'data': {'states': 'ユーザが見つかりませんでした'}} 
 
@@ -84,10 +82,12 @@ def search_room():
         add_user_room = User_Room(user_id=user.user_id, room_id=search_room.room_id)
         db.session.add(add_user_room)
 
+        room_token = search_room.token
+
         # ルームにこれ以上人が入らないようにデータを更新
         search_room.is_open = 0
         db.session.commit()
-        
-        return {'code': 1, 'data': {'states': 'ルームが見つかりました'}}
+
+        return {'code': 1, 'data': {'states': 'ルームが見つかりました', 'room_token': room_token}}
     else:
         return {'code': 0, 'data': {'states': '無効なHTTPメソッドです'}}

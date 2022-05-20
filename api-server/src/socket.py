@@ -1,5 +1,7 @@
-from run import socketio
+from run import socketio, celery
 from models import db, User, Game, Room, User_Room, User_Data
+
+import time
 from flask_jwt_extended import create_access_token, join_room, emit
 
 @socketio.on('join', namespace='/room')
@@ -49,9 +51,20 @@ def join(data):
         user_data = User.query.filter_by(user_id=user.user_id).first()
         user_list[num] = {'name': user_data.name}
 
-    emit('return', {'user_list': user_list, 'room_pass': session['room_pass']})
+    count_down.delay(4)
+    emit('return', {'user_list': user_list, 'room_token': access_token})
 
 
 @socketio.on('leave')
-def leave_room():
-    leave_room(session['room_pass'])
+def leave_room(data):
+    leave_room(data['room_token'])
+
+def send_message():
+    pass
+    
+@celery.task()
+def count_down(seconds):
+    for second in range(1, seconds):
+        time.sleep(1)
+        print(seconds - second)
+        emit('count', {'count_down': seconds - second})

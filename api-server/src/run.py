@@ -4,6 +4,7 @@ from flask_socketio import SocketIO
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from make_celery import make_celery
+import time
 
 from models import db
 from app import app_bp
@@ -14,7 +15,7 @@ from history import history_bp
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')
-    
+
     # Blueprint設定
     app.register_blueprint(app_bp)
     app.register_blueprint(user_bp)
@@ -39,12 +40,23 @@ def after_request(response):
 db.init_app(app)
 Migrate(app, db)
 
+
 jwt = JWTManager(app)
 socketio = SocketIO(app)
 celery = make_celery(app)
 
+@celery.task()
+def count_down(seconds):
+    for second in range(1, seconds):
+        time.sleep(1)
+        print(seconds - second)
 
+@app.route('/test')
+def aaa():
+    func = count_down.delay(3)
+    func.wait()
+    return 'a'
 
 if __name__ == '__main__':
-    #socketio.run(app)
-    app.run()
+    socketio.run(app, debug=True)
+    # app.run()

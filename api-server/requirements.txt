@@ -9,7 +9,7 @@ marshmallow-sqlalchemy
 flask-cors
 flask-jwt-extended
 flask-socketio
-eventlet
+# eventlet
 opencv-python
 mediapipe
 numpy
