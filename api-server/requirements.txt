@@ -4,7 +4,6 @@ sqlalchemy
 flask-sqlalchemy
 pymysql
 flask-migrate
-flask-login
 flask-marshmallow
 marshmallow-sqlalchemy
 flask-cors
@@ -14,3 +13,5 @@ eventlet
 opencv-python
 mediapipe
 numpy
+celery
+redis

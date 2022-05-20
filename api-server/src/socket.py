@@ -1,66 +1,57 @@
 from run import socketio
-import models
-from flask_socketio import emit
-from flask import session, join_room
-import time
+from models import db, User, Game, Room, User_Room, User_Data
+from flask_jwt_extended import create_access_token, join_room, emit
 
-# @socketio.on('my event')
-# def test_message(message):
-#     emit('my response', {'data': message['data']})
+@socketio.on('join', namespace='/room')
+def join(data):
+    # ルームに入る側
+    if data['room_token']:
+        room_token = data['room_token']
+        
+        room = Room.query.filter_by(room_token=room_token, is_open=1).first()
+        if not room:
+            return {'code': 0, 'data': {'states': 'roomが見つかりません'}}
 
-# @socketio.on('my broadcast event')
-# def test_message(message):
-#     emit('my response', {'data': message['data']}, broadcast=True)
+        if not data['user_token']:
+            return {'code': 0, 'data': {'states': 'user_Tokenが渡されていません'}}
+        
+        user = User.query.filter_by(token=data['user_token']).first()
+        if not user:
+            return {'code': 0, 'data': {'states': 'ユーザが見つかりません'}}
 
-# @socketio.on('connect')
-# def test_connect():
-#     emit('my response', {'data': 'Connected'})
+        add_user_room = User_Room(user_id=user.user_id, room_id=room.room_id)
+        db.session.add(add_user_room)
 
-# @socketio.on('disconnect')
-# def test_disconnect():
-#     print('Client disconnected')
+        access_token = create_access_token(room_pass)
+        room.token = access_token
+        room.is_open = 0
+        db.session.commit()
 
+        join_room(access_token)
+    # ルームを作る側
+    else:
+        if data['room_pass']:
+            return {'code': 0, 'data': {'states': 'room_passが渡されていません'}}
 
-# @socketio.on('connect', namespace='/room')
-# def start_room():
-#     print('aaa')
-#     emit('join', {})
+        room_pass = data['room_pass']
+        room = Room.query.filter_by(room_pass=room_pass, is_open=1).first()
+        if not room:
+            return {'code': 0, 'data': {'states': 'roomが見つかりません'}}
 
-
-# @socketio.on('join')
-# def join_room(room_pass):
-#     emit('stats', 'error')
-#     # if not 'user_id' in session:
-#     #     return 'ログインしてください'
-
-#     # if not 'room_pass' in session:
-#     #     return '操作をもう一度行ってください'
-
-#     # # ルームに入る側
-#     # if room_pass:
-#     #     room = models.Rooom.query.filter_by(room_pass=room_pass, is_open=1).first()
-#     #     if not room:
-#     #         return 'そのようなルームパスはありません'
-
-#     #     session['room_pass'] = room_pass
-#     # # ルームを作る側
-#     # else:
-#     #     room = models.Room.query.filter_by(room_pass=session['room_pass'], is_open=1).first()
-#     #     join_room(room.room_id)
+        access_token = create_access_token(room_pass)
+        room.token = access_token
+        db.session.commit()     
+        join_room(access_token)
     
-#     # print('c')
-#     # user_room = models.User.query.filter_by(room_id=room.room_id).all()
-#     # print(user_room)
+    user_room = User_Room.query.filter_by(room_id=room.room_id).all()
+    user_list = {}
+    for num, user in enumerate(user_room):
+        user_data = User.query.filter_by(user_id=user.user_id).first()
+        user_list[num] = {'name': user_data.name}
 
-#     # emit('stats', {'user': user, 'room': room}, room=session['room_pass'])
+    emit('return', {'user_list': user_list, 'room_pass': session['room_pass']})
 
 
-# @socketio.on('leave')
-# def leave_room():
-#     leave_room(session['room_pass'])
-
-# def count_down(seconds):
-#     for second in range(1, seconds):
-#         time.sleeo(1)
-#         print(second)
-#         emit('count', {'count_down': second})
+@socketio.on('leave')
+def leave_room():
+    leave_room(session['room_pass'])

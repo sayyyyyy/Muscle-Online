@@ -1,13 +1,12 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_marshmallow import Marshmallow
-from flask_login import UserMixin
 
 
 db = SQLAlchemy()
 ma = Marshmallow()
 
-class User(db.Model, UserMixin):
+class User(db.Model):
     
     # テーブル名
     __tablename__ = 'users'
@@ -41,6 +40,7 @@ class Room(db.Model):
     room_id = db.Column(db.Integer, primary_key=True)
     room_name = db.Column(db.String(255), default="フレンド対戦")
     room_pass = db.Column(db.String(6), nullable=False)
+    token = db.Column(db.String(511))
     is_open = db.Column(db.Boolean, default=False)
 
     to_user_room = db.relationship('User_Room', backref='rooms', lazy=True)
