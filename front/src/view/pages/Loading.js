@@ -3,14 +3,6 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import classes from './../../style/page/Loading.module.css'
 
-const images = [
-  process.env.PUBLIC_URL + "/img/image1.png",
-  process.env.PUBLIC_URL + "/img/image2.png",
-  process.env.PUBLIC_URL + "/img/image3.png",
-  process.env.PUBLIC_URL + "/img/image4.png",
-  process.env.PUBLIC_URL + "/img/image5.png",
-];
-
 const Loading=()=>{
 
     const settings = {

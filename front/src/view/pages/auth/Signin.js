@@ -2,6 +2,7 @@
 import React,{useState} from "react"
 import axios from "axios";
 import { useNavigate,Link } from 'react-router-dom';
+import classes from './../../../style/page/Signin.module.css'
 
 const Signin= (props) => {
 
@@ -40,27 +41,35 @@ const Signin= (props) => {
   
   return (
     <>
-    <h2>ログイン状態: {props.loggedInStatus}</h2>
-      <h1>ログイン</h1>
+      <div className={classes.backgroundStyle1}></div>
+      <div className={classes.backgroundStyle2}></div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={classes.formStyle}>
+        <h1 className={classes.helloStyle}>おかえりなさい</h1>
+        <p className={classes.titleStyle}>メールアドレス</p>
         <input 
           type="email" 
           name="email" 
           placeholder="メールアドレス" 
           value={email} 
           onChange={event=> setEmail(event.target.value)}
+          className={classes.inputStyle}
         />
+        <br />
+        <p className={classes.titleStyle}>パスワード</p>
         <input 
           type="password"
           name="password" 
           placeholder="パスワード"
           value={password}
           onChange={event=> setPassword(event.target.value)}
+          className={classes.inputStyle}
         />
-        <button type="submit" onClick={handleSubmit}>登録</button>
+        <button type="submit" onClick={handleSubmit} className={classes.submitButtonStyle} > <Link to="/home" className={classes.linkStyle}>登録</Link></button>
       </form>
-      <button> <Link to="/">戻る</Link></button>
+      <button className={classes.backButtonStyle}> <Link to="/" className={classes.linkStyle}>戻る</Link></button>
+      <div className={classes.backgroundStyle3}></div>
+      <div className={classes.backgroundStyle4}></div>
     </>
   );
 };

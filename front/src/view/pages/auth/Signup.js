@@ -44,6 +44,8 @@ const Signup= (props) => {
   
   return (
     <>
+      <div className={classes.backgroundStyle1}></div>
+      <div className={classes.backgroundStyle2}></div>
       
       <form className={classes.formStyle} onSubmit={handleSubmit} >
         <h1 className={classes.helloStyle}>ようこそ</h1>
@@ -78,6 +80,9 @@ const Signup= (props) => {
       </form>
 
       <button className={classes.backButtonStyle}> <Link to="/" className={classes.linkStyle}>戻る</Link></button>
+
+      <div className={classes.backgroundStyle3}></div>
+      <div className={classes.backgroundStyle4}></div>
     </>
   );
 };
