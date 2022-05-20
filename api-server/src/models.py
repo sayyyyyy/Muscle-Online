@@ -1,13 +1,12 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_marshmallow import Marshmallow
-from flask_login import UserMixin
 
 
 db = SQLAlchemy()
 ma = Marshmallow()
 
-class User(db.Model, UserMixin):
+class User(db.Model):
     
     # テーブル名
     __tablename__ = 'users'

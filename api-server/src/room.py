@@ -53,12 +53,12 @@ def create_room():
 
         access_token = create_access_token(room_pass)
         room.token = access_token
-        db.session.commit()     
-        join_room(room.room_id)
+        db.session.commit()
 
         return {'code': 1, 'data': {'states': 'ルームを作成しました', 'room_token': access_token}}
     else:
-        return {'code': 0, 'data': {'無効なHTTPメソッドです'}}
+        return {'code': 0, 'data': {'states': '無効なHTTPメソッドです'}}
+
 
 @room_bp.route('/search_room', methods=['GET', 'POST'])
 def search_room():
@@ -85,11 +85,9 @@ def search_room():
         db.session.add(add_user_room)
 
         # ルームにこれ以上人が入らないようにデータを更新
-        access_token = create_access_token(search_room.room_pass)
         search_room.is_open = 0
         db.session.commit()
-        join_room(access_token)
-
-        return {'code': 1, 'data': {'states': 'ルームが見つかりました', 'room_token': access_token}}
+        
+        return {'code': 1, 'data': {'states': 'ルームが見つかりました'}}
     else:
         return {'code': 0, 'data': {'states': '無効なHTTPメソッドです'}}

@@ -1,7 +1,7 @@
 /* Register.js */
 import React,{useState} from "react"
 import axios from "axios";
-import { Link } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import classes from './../../../style/page/Signup.module.css'
 
 const Signup= (props) => {
@@ -10,6 +10,8 @@ const Signup= (props) => {
   const [email, setEmail]=useState("")
   const [password,setPassword]=useState("")
   //const [passwordConfirmation, setPasswordConfirmation] = useState("")
+
+  const navigate=useNavigate()
 
   //APIに送信
   const handleSubmit =(event)=>{ 
@@ -26,10 +28,14 @@ const Signup= (props) => {
     },
     // { withCredentials: true } //cookieを含むか
     ).then(res=>{ //ユーザー作成成功
+        props.setToken(res.data.data.token)
         console.log(res.data.data)
-        // if(res.data.status==='create'){ //railsのAPIのdata.statasを見て判断する。
-        //   props.handleSuccessfullAuthentication(res.data) //新規登録画面に飛ぶ(home.jsの関数)
-        // }
+        if (res.data.code===1){
+          console.log("ログイン成功しました")
+          console.log(res.data.data.token)
+          navigate('/home')
+        }
+        
     }).catch(err=>{//ユーザー作成失敗
         console.log("registration res", err)
     })

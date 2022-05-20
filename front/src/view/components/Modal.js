@@ -1,26 +1,65 @@
 import classes from "./../../style/components/Modal.module.css"
 import {useState} from "react"
+import axios from "axios"
 
 const Modal=(props)=>{
 
-    const [JoinRoom,setJoinRoom]=useState(true)
-    const [roomId,setRoomId]=useState("")
+    //モーダルの画面遷移
+    const [modalChange,setModalChange]=useState(true)
+
     const [roomPass,setRoomPass]=useState("")
+    const [roomName,setRoomName]=useState("")
 
-    const handleSubmit=()=>{ //作成
 
+    //ルームの作成ボタン
+    const joinRoomButton=(event)=>{ 
+        axios.post("http://localhost:5001/search_room",
+        {
+            room_pass:roomPass,
+            user_token:props.token
+        },
+        // { withCredentials: true } //cookieを含むか
+        ).then(res=>{ //ユーザー作成成功
+            console.log(res)
+           console.log("ルームに参加")
+        }).catch(err=>{//ユーザー作成失敗
+            console.log("registration res", err)
+            console.log("ルームに参加することができませんでした")
+        })
+        event.preventDefault()
     }
 
-    const closeModal=()=>{//home画面のルームバトルのモーダル表示
+    //ルームの作成ボタン
+    const createRoomButton=(event)=>{ 
+        axios.post("http://localhost:5001/create_room",
+        {
+            room_name:roomName,
+            user_token:props.token
+        },
+        // { withCredentials: true } //cookieを含むか
+        ).then(res=>{ //ユーザー作成成功
+            console.log(res)
+           console.log("ルームに作成")
+        }).catch(err=>{//ユーザー作成失敗
+            console.log("registration res", err)
+             console.log("ルームを作成することができませんでした")
+        })
+        event.preventDefault()
+    }
+
+    
+    //home画面のルームバトルのモーダル表示
+    const closeModal=()=>{
         props.setShowModal(false);
     }
 
-    const changeMakeRoom=()=>{//ルームの作成ボタンを押した場合
-        setJoinRoom(false);
+    //ルームの作成リンク を押した場合
+    const changeCreateRoom=()=>{
+        setModalChange(false);
     }
-
-    const changeJoinRoom=()=>{//ルームの参加ボタンを押した場合
-        setJoinRoom(true);
+    //ルームの参加リンク を押した場合
+    const changeJoinRoom=()=>{
+       setModalChange(true);
     }
 
     return(
@@ -31,21 +70,15 @@ const Modal=(props)=>{
                     
                     <div>
                         <button onClick={changeJoinRoom}>ルームに参加</button> /
-                        <button onClick={changeMakeRoom}>ルームの作成</button>
+                        <button onClick={changeCreateRoom}>ルームの作成</button>
                         <button onClick={closeModal}>×</button>
                     </div>
                     <hr className={classes.hr}/>
-                    {JoinRoom === true?
+                    {modalChange === true?
+                     //ルームに参加する画面
                     (
                         <div>
-                            <form onSubmit={handleSubmit}>
-                                <h5>ルームの名前</h5>
-                                <input 
-                                  type="roomid" 
-                                  name="roomid" 
-                                  value={roomId} 
-                                  onChange={event=> setRoomId(event.target.value)}
-                                />
+                            <form onSubmit={joinRoomButton}>
                                 <h5>ルームのパスワード</h5>
                                 <input 
                                   type="password"
@@ -59,9 +92,21 @@ const Modal=(props)=>{
                             </form>
                         </div>
                     ):
+                    //ルームの作成画面
                     (
                         <div>
-                            ルームの作成
+                           <form onSubmit={createRoomButton}>
+                                <h5>ルーム名</h5>
+                                <input 
+                                  type="name"
+                                  name="name" 
+                                  placeholder="ルーム名"
+                                  value={roomName}
+                                  onChange={event=> setRoomName(event.target.value)}
+                                />
+                                <br/>
+                                <button type="submit">作成</button>
+                            </form>
                         </div>
                     )
                     }

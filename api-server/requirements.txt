@@ -13,3 +13,5 @@ eventlet
 opencv-python
 mediapipe
 numpy
+celery
+redis
