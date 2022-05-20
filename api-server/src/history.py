@@ -52,4 +52,4 @@ def history():
 
         return {'code': 1, 'data': {'states': 'ユーザデータが見つかりました', 'user_data': return_data}}
     else:
-        return {'code': 0, 'data': {'無効なHTTPメソッドです'}}
+        return {'code': 0, 'data': {'states': '無効なHTTPメソッドです'}}

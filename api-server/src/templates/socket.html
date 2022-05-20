@@ -15,13 +15,13 @@
         $('#button').click(function(){
             let socket = io.connect('http://localhost:5001/room');
             socket.on('connect', function() {
-                let room_pass = document.getElementById('room_pass');
-                console.log(room_pass.value);
-                // let room_pass = 'aaa';
+                let room_token = "";
+                let room_pass = "";
+                let user_token = "";
                 if (room_pass){
-                    socket.emit('join', {'room_pass': room_pass.value});
+                    socket.emit('join', {'user_token': user_token, 'room_pass': room_pass});
                 } else {
-                    socket.emit('join', {});
+                    socket.emit('join', {'user_token': user_token, 'room_pass': room_token});
                 }
             });
             

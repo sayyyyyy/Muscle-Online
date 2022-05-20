@@ -20,4 +20,7 @@ class DevelopmentConfig:
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
     JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(hours=1)
 
+    CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
+    CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+
 Config = DevelopmentConfig
