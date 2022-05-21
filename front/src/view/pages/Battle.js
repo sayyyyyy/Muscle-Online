@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import classes from "./../../style/page/Home.module.css"
 import Webcam from "react-webcam";
 import { useState, useEffect ,useRef,useCallback} from 'react';
+import axios from 'axios';
 
 
 //画面の大きさを取得
@@ -44,12 +45,22 @@ const Battle=()=>{
     const webcamRef = useRef(null);
     const [imageSrc, setImageSrc] = useState("")
 
-    useEffect(() => {
+    useEffect((event) => {
         setInterval(()=>{
             setImageSrc(webcamRef.current?.getScreenshot());
-            console.log(imageSrc)
-            console.log(1)
-        },5000);
+            axios.post("http://localhost:5001/test",
+            {
+                data:imageSrc
+            },
+            // { withCredentials: true } //cookieを含むか
+            ).then(res=>{ //ユーザー作成成功
+                console.log("成功")
+                console.log(res)
+            }).catch(err=>{//ユーザー作成失敗
+                console.log("registration res", err)
+            })
+            event.preventDefault()
+        },1000);
     }, [imageSrc]);
 
 

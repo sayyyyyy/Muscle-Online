@@ -1,5 +1,4 @@
-from urllib import request
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 from flask_socketio import SocketIO, join_room, emit
 from flask_migrate import Migrate
@@ -53,8 +52,9 @@ def count_down(seconds):
         print(seconds - second)
 
 @app.route('/test', methods=['GET', 'POST'])
-def aaa(data):
+def aaa():
     if request.method == "POST":
+        data = request.get_json()
         print(data)
     else:
         print('get')
