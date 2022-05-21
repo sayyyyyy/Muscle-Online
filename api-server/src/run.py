@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 from flask_socketio import SocketIO, join_room, emit
 from flask_migrate import Migrate
@@ -51,10 +51,14 @@ def count_down(seconds):
         time.sleep(1)
         print(seconds - second)
 
-@app.route('/test')
+@app.route('/test', methods=['GET', 'POST'])
 def aaa():
-    count_down.delay(3)
-    return 'a'
+    if request.method == "POST":
+        data = request.get_json()
+        print(data)
+    else:
+        print('get')
+    return data
 
 @socketio.on('join', namespace='/room')
 def join(data):

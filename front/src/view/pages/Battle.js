@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom';
 import classes from "./../../style/page/Home.module.css"
 import Webcam from "react-webcam";
-import { useState, useEffect } from 'react';
+import { useState, useEffect ,useRef,useCallback} from 'react';
+import axios from 'axios';
 
+
+//画面の大きさを取得
 export const useWindowDimensions = () => {
  
   const getWindowDimensions = () => {
@@ -24,7 +27,12 @@ export const useWindowDimensions = () => {
   return windowDimensions;
 }
 
+
+//メインメソッド
 const Battle=()=>{
+
+    
+
     const { width, height } = useWindowDimensions();
     const videoConstraints = {
         width: width*0.9,
@@ -34,6 +42,28 @@ const Battle=()=>{
     console.log(width);
     console.log(height);
 
+    const webcamRef = useRef(null);
+    const [imageSrc, setImageSrc] = useState("")
+
+    useEffect((event) => {
+        setInterval(()=>{
+            setImageSrc(webcamRef.current?.getScreenshot());
+            axios.post("http://localhost:5001/test",
+            {
+                data:imageSrc
+            },
+            // { withCredentials: true } //cookieを含むか
+            ).then(res=>{ //ユーザー作成成功
+                console.log("成功")
+                console.log(res)
+            }).catch(err=>{//ユーザー作成失敗
+                console.log("registration res", err)
+            })
+            event.preventDefault()
+        },1000);
+    }, [imageSrc]);
+
+
     
     return (
         <>
@@ -41,13 +71,17 @@ const Battle=()=>{
                 audio={false}
                 screenshotFormat="image/jpeg"
                 videoConstraints={videoConstraints}
+                ref={webcamRef}
             />
+            
             <br/>
+            <div>
+            <img src={imageSrc} alt="Screenshot" />
+          </div>
+            
             <button >
                 <Link to="/finishbattle">対戦結果</Link>
             </button>
-            
-            
         </>
     )
 }
