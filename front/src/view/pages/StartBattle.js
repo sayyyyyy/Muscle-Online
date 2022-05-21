@@ -29,8 +29,16 @@ const StartBattle=()=>{
 
     return (
         <>
-            <div classes={classes.background}>
-                <h1>対戦準備画面</h1>
+            <div className={classes.background}>
+                <div className={classes.playercontainer}>
+                    <div className={classes.playerbox}>
+                        <h1>player1</h1>
+                    </div>
+                    <h2 className={classes.vsText}><span>VS</span></h2>
+                    <div className={classes.playerbox}>
+                        <h1>player2</h1>
+                    </div>
+                </div>
                 <button className={classes.readyButton} onClick={startBattleButton}>準備完了</button>
             </div>
         </>

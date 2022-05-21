@@ -1,11 +1,57 @@
 .background{
     background-color: black;
+    width: 100vw;
+    height: 100vh;
+    text-align: center;
+}
+
+.playercontainer{
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    
+}
+
+.playerbox{
+    background-color: white;
+    height: 50vh;
+    width: 30%;
+    margin-top: 10%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.vsText span{
+    color: #FF4E00;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50%;
+    font-size: 64px;
+    font-weight: bold;
+    background: -webkit-linear-gradient(left, #FF4E00, #FFB851);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding-top: 10px;
+  height: 10px;
+}
+.vsText {
+    margin-top: 15%;  
 }
 
 .readyButton{
     background-color: #FFB851;
     color:white;
     border: none;
+    margin-top: 10%;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: bold;
+    height: 10%;
+    width: 50%;
+
 }
 
 .linkStyle{ 
