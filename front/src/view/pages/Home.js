@@ -14,7 +14,8 @@ const Home=()=>{
 
   return(
     <>
-      <h1>ホーム画面</h1>
+      <div className={classes.backgroundStyle1}></div>
+      <div className={classes.backgroundStyle2}></div>
       <button className={classes.button} onClick={openModal}>
        <img src={`${process.env.PUBLIC_URL}/img/roombattle1.png`} alt="ルームボタン" className={classes.roomimg} />
       </button>
@@ -26,11 +27,8 @@ const Home=()=>{
       </button>
 
       
-
-      <div>
-
-      </div>
       <Footer />
+      <img src={`${process.env.PUBLIC_URL}/img/buttom.png`} alt="ルームボタン" className={classes.buttomimg} />
     </>
   )
 

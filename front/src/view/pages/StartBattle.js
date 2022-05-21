@@ -1,44 +1,45 @@
 import { Link } from 'react-router-dom';
 import classes from "./../../style/page/StartBattle.module.css"
+import io from "socket.io-client";
+import { useNavigate } from 'react-router-dom';
 
 const StartBattle=()=>{
 
-    const startBattleButton=(event)=>{
-        // let socket = io.connect('http://localhost:5001/room');
-        // const user_token = props.token
+    const navigate=useNavigate()
+
+    const startBattleButton=(props)=>{
+        let socket = io.connect('http://localhost:5001/room');
+        // const user_token = props.token;
         // const room_token = props.room_token;
+        const user_token = 1
+        const room_token = 2;
 
-        // // ボタンを準備OKに変更する
+        console.log(user_token)
+        console.log(room_token)
 
-        // socket.emit('ready', {'user_token': user_token, 'room_token': room_token})
-    
-        // // カウントダウンが進むたびに発火 1秒ごとに値が入ってくる
-        // // {'count_down': 残り秒数}
-
-        // socket.on('count', function(data) {
-        //     console.log(data);
-        // });
-
-        // // ゲームスタートするときに発火する
-        // // {'data': 'ゲームスタート!'}
-
-        // socket.on('start', function(data) {
-        //     console.log(data);
-        // });
-
-        // // ゲームが終了した時に発火する　
-        // // {'your_count': ユーザの回数, 'enemy_count': 相手の回数, 'winner': 勝者の名前})
-        
-        // socket.on('finish', function(data) {
-        //     console.log(data);
-        // });
+        if(user_token===undefined && room_token===undefined ){
+            console.log("バトルに参加できません")
+        }
+        else{
+            console.log("バトルが始まります")
+            socket.emit('ready', {'user_token': user_token, 'room_token': room_token})
+            navigate('/battle');
+        }
     }
 
     return (
         <>
-            <div classes={classes.background}>
-                <h1>対戦準備画面</h1>
-                <button className={classes.readyButton}><Link to="/battle" className={classes.linkStyle}>準備完了</Link></button>
+            <div className={classes.background}>
+                <div className={classes.playercontainer}>
+                    <div className={classes.playerbox}>
+                        <h1>player1</h1>
+                    </div>
+                    <h2 className={classes.vsText}><span>VS</span></h2>
+                    <div className={classes.playerbox}>
+                        <h1>player2</h1>
+                    </div>
+                </div>
+                <button className={classes.readyButton} onClick={startBattleButton}>準備完了</button>
             </div>
         </>
     )

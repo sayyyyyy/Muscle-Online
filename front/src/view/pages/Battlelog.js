@@ -33,20 +33,34 @@ const Battlelog=(props)=>{
 
     return(
         <>
-            
+            <div className={classes.backgroundStyle1}></div>
             <div className={classes.totalResult}>
-                <div>
-                    <p className={classes.t}>Win</p>
-                    <h1 className={classes.totalResultWinNum}>{userlog.win}</h1>
-                    <h1 className={classes.totalResultWinNum}>1</h1>
+                <div className={classes.ResultBox}>
+                    <p className={classes.totalResultText}>Win</p>
+                    {/* <h1 className={classes.totalResultNum}>{userlog.win}</h1> */}
+                    <h1 className={classes.totalResultNum}>0</h1>
                 </div>
-                <div>
-                    <p>Lose</p>
-                    <h1>{userlog.lose}</h1>
-                    <h1 className={classes.totalResultWinNum}>0</h1>
+                <div></div>
+                <div className={classes.ResultBox}>
+                    <p className={classes.totalResultText}>Lose</p>
+                    {/* <h1 className={classes.totalResultNum}>{userlog.lose}</h1> */}
+                    <h1 className={classes.totalResultNum}>1</h1>
                 </div>
             </div>
-            
+
+            <div className={classes.totalBattlelog}>
+                <div>　</div>
+               <div className={classes.battlelog}>
+                   <h2 className={classes.battleResult}>Win</h2>
+                   <h4 className={classes.battleUserName}>いわぐちやすひろ</h4>
+                   <h3 className={classes.battleTimes}>43<span>回</span></h3>
+               </div>
+               <div className={classes.battlelog}>
+                   <h2 className={classes.battleResult}>Win</h2>
+                   <h4 className={classes.battleUserName}>いわぐちやすひろ</h4>
+                   <h3 className={classes.battleTimes}>43<span>回</span></h3>
+               </div>
+            </div>            
             <Footer />
         </>
     )

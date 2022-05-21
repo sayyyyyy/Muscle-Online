@@ -108,17 +108,17 @@ const Modal=(props)=>{
             (<div  id="overlay" className={classes.overlay}>
                 <div id="modalContent"  className={classes.modalContent}>
                     
-                    <div>
-                        <button onClick={changeJoinRoom}>ルームに参加</button> /
-                        <button onClick={changeCreateRoom}>ルームの作成</button>
-                        <button onClick={closeModal}>×</button>
+                    <div className={classes.modalLink}>
+                        <button onClick={closeModal} className={classes.closeButton}>×</button>
+                        <button onClick={changeJoinRoom} className={classes.RoomButton}>ルームに参加</button> /
+                        <button onClick={changeCreateRoom} className={classes.RoomButton}>ルームの作成</button>
                     </div>
                     <hr className={classes.hr}/>
                     {modalChange === true?
                      //ルームに参加する画面
                     (
                         <div>
-                            <form onSubmit={joinRoomButton}>
+                            <form onSubmit={joinRoomButton} className={classes.form}>
                                 <h5>ルームのパスワード</h5>
                                 <input 
                                   type="password"
@@ -126,16 +126,17 @@ const Modal=(props)=>{
                                   placeholder="パスワード"
                                   value={roomPass}
                                   onChange={event=> setRoomPass(event.target.value)}
+                                  className={classes.inputStyle}
                                 />
                                 <br/>
-                                <button type="submit">参加</button>
+                                <button type="submit" className={classes.joinButton}>参加</button>
                             </form>
                         </div>
                     ):
                     //ルームの作成画面
                     (
                         <div>
-                           <form onSubmit={createRoomButton}>
+                           <form onSubmit={createRoomButton} className={classes.form}>
                                 <h5>ルーム名</h5>
                                 <input 
                                   type="name"
@@ -143,9 +144,10 @@ const Modal=(props)=>{
                                   placeholder="ルーム名"
                                   value={roomName}
                                   onChange={event=> setRoomName(event.target.value)}
+                                  className={classes.inputStyle}
                                 />
                                 <br/>
-                                <button type="submit">作成</button>
+                                <button type="submit" className={classes.joinButton}>作成</button>
                             </form>
                         </div>
                     )

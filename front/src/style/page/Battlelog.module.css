@@ -1,10 +1,89 @@
 .totalResult{
-    background-color: orange;
+    background: -moz-linear-gradient(top left, #FFB851, #FF4E00); 
+    background: -webkit-linear-gradient(top left, #FFB851, #FF4E00); 
+    background: linear-gradient(to bottom right, #FFB851, #FF4E00); 
     display: flex;
+    width: 80%;
+    height: 20vh;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5%;
+    margin-bottom: 10%;
+    position: relative;
+   
 }
-.totalResultWinText{
-    color:white
+.ResultBox{
+    margin-left: auto;
+    margin-right: auto; 
+   
 }
-.t{
-    color:white
+
+.totalResultText{
+    color:white;
+    font-size: 24px;
+    font-weight: bold;
+    vertical-align:baseline;
+    padding-top: 10%;
+    height: 30px;
+    width: 30px;
+}
+.totalResultNum{
+    color:white;
+    font-weight: bold;
+    font-size: 64px;
+    margin-top: -50%;
+    vertical-align:baseline;
+    height: 30px;
+    width: 30px;
+}
+
+.totalBattlelog{
+    box-shadow: 0 0 3px gray;
+    height: 60vh;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto; 
+}
+.battlelog{
+    background-color: #DEDEDE;
+    display: flex;
+    
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto; 
+    margin-bottom: 20px;
+    margin-top: -10px;
+}
+.battleResult{
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.battleUserName{
+}
+
+.battleTimes{
+    background-color: black;
+    color: white;
+    font-size: 24px;
+    margin: 0;
+    text-align: center;
+    margin-left: auto;
+    width: 25%;
+    justify-content: center;
+    vertical-align: middle;
+    display: table-cell;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding-top: 5%;
+    padding-bottom: -5%;
+}
+
+.backgroundStyle1{
+    padding:50px 10px;   /* buttom , left */
+    transform:skew(0deg, -15deg) ; 
+    background:#FF4E00; 
+    margin-top:-60px;
 }
