@@ -15,3 +15,5 @@ mediapipe
 numpy
 celery
 redis
+gevent
+gevent-websocket

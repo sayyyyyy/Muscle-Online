@@ -16,7 +16,7 @@ class User(db.Model):
     name = db.Column(db.String(255), nullable=False)
     password = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False)
-    token = db.Column(db.String(511))
+    token = db.Column(db.String(1023))
     is_change_password = db.Column(db.Boolean, default=False)
 
 
@@ -40,7 +40,7 @@ class Room(db.Model):
     room_id = db.Column(db.Integer, primary_key=True)
     room_name = db.Column(db.String(255), default="フレンド対戦")
     room_pass = db.Column(db.String(6), nullable=False)
-    token = db.Column(db.String(511))
+    token = db.Column(db.String(1023))
     is_open = db.Column(db.Boolean, default=False)
 
     to_user_room = db.relationship('User_Room', backref='rooms', lazy=True)

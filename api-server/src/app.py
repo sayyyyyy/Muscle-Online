@@ -6,7 +6,7 @@ import hashlib
 from camera import VideoCamera
 from flask_jwt_extended import create_access_token
 
-from models import db, User, Game, Room, User_Room, User_Data
+from models import db, User, Game
 
 app_bp = Blueprint('app_bp', __name__)
 
