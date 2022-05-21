@@ -117,7 +117,7 @@ def join(data):
 def leave_room(data):
     leave_room(data['room_token'])
 
-@socketio.on('ready')
+@socketio.on('ready', namespace='/room')
 def ready(data):
     # 2人とも準備完了ボタンを押されているか
     # modelsにisReadyカラムを追加してそれが0か1かで判定する
@@ -138,14 +138,14 @@ def ready(data):
     
 
     # ゲーム開始
-    start.delay(30, room_token)
+    start(30, room_token)
     
 
 def start(limit, room_token):
     emit('start', {'data': 'ゲームスタート!'})
     print('ゲームを開始しました')
 
-    count_down(limit, room_token)
+    count_down.delay(limit, room_token)
 
     # カウント機能を配置
 

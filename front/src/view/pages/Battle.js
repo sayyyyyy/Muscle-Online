@@ -3,11 +3,9 @@ import classes from "./../../style/page/Home.module.css"
 import Webcam from "react-webcam";
 import { useState, useEffect ,useRef,useCallback} from 'react';
 import axios from 'axios';
-
-
+import io from "socket.io-client"
 //画面の大きさを取得
 export const useWindowDimensions = () => {
- 
   const getWindowDimensions = () => {
     const { innerWidth: width, innerHeight: height } = window;
     return {
@@ -31,20 +29,30 @@ export const useWindowDimensions = () => {
 //メインメソッド
 const Battle=()=>{
 
-    
-
     const { width, height } = useWindowDimensions();
     const videoConstraints = {
         width: width*0.9,
         height: height*0.9,
         facingMode: "user"
     };
-    console.log(width);
-    console.log(height);
 
     const webcamRef = useRef(null);
     const [imageSrc, setImageSrc] = useState("")
 
+    const socket = io('http://localhost:5001/room');
+  
+    socket.on('count', (data)=>{
+        console.log(data);
+        console.log(5);
+    });
+
+       
+    socket.on('start', function(data) {
+        console.log(2);
+        console.log(data);
+    });
+
+    //リアルタイム映像を画像に変換し,flaskに送る処理
     useEffect((event) => {
         setInterval(()=>{
             setImageSrc(webcamRef.current?.getScreenshot());
@@ -60,7 +68,7 @@ const Battle=()=>{
                 console.log("registration res", err)
             })
             event.preventDefault()
-        },1000);
+        },10000000);
     }, [imageSrc]);
 
 
