@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import classes from "./../../style/page/Home.module.css"
+import classes from "./../../style/page/Battle.module.css"
 import Webcam from "react-webcam";
 import { useState, useEffect ,useRef,useCallback} from 'react';
 import axios from 'axios';
@@ -31,8 +31,8 @@ const Battle=()=>{
 
     const { width, height } = useWindowDimensions();
     const videoConstraints = {
-        width: width*0.9,
-        height: height*0.9,
+        width: width*0.8,
+        height: height*0.8,
         facingMode: "user"
     };
 
@@ -75,21 +75,37 @@ const Battle=()=>{
     
     return (
         <>
-            <Webcam
-                audio={false}
-                screenshotFormat="image/jpeg"
-                videoConstraints={videoConstraints}
-                ref={webcamRef}
-            />
+            <div className={classes.background}>
+                <div className={classes.TimeNum}>
+                    <div className={classes.Time}>
+                        <h1>11<span>s</span></h1>
+                    </div>
+                    <div className={classes.MuscleNum}>
+                        <h1>1</h1>
+                    </div>
+                </div>
+                <Webcam
+                    audio={false}
+                    screenshotFormat="image/jpeg"
+                    videoConstraints={videoConstraints}
+                    ref={webcamRef}
+                    className={classes.webcam}
+                    width={width*0.75}
+                    height={height*0.75}
+                />
+               
             
+                
+            </div>
             <br/>
-            <div>
-            <img src={imageSrc} alt="Screenshot" />
-          </div>
+                <div>
+                    <img src={imageSrc} alt="Screenshot" />
+                </div>
             
-            <button >
-                <Link to="/finishbattle">対戦結果</Link>
-            </button>
+                <button >
+                    <Link to="/finishbattle">対戦結果</Link>
+                </button>
+            
         </>
     )
 }
