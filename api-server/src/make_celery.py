@@ -2,8 +2,8 @@ from celery import Celery
 
 def make_celery(app):
     celery = Celery('worker',
-            backend=app.config['CELERY_RESULT_BACKEND'],
-            broker=app.config['CELERY_BROKER_URL'])
+            backend='redis://redis:6379',
+            broker='redis://redis:6379')
     celery.conf.update(app.config)
 
     class ContextTask(celery.Task):
