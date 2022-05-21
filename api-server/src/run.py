@@ -105,7 +105,7 @@ def join(data):
         user_data = User.query.filter_by(user_id=user.user_id).first()
         user_list[num] = {'name': user_data.name}
 
-    emit('return', {'user_list': user_list, 'room_token': access_token})
+    emit('return', {'user_list': user_list, 'room_token': access_token}, to=access_token)
     return 0
 
 
@@ -114,28 +114,55 @@ def leave_room(data):
     leave_room(data['room_token'])
 
 @socketio.on('ready')
-def ready():
+def ready(data):
+    # 2人とも準備完了ボタンを押されているか
+    # modelsにisReadyカラムを追加してそれが0か1かで判定する
+
+    if not 'user_token'in data:
+        print('user_tokenが渡されていません')
+
+
     # 準備完了ボタンを押されてから10秒間残り秒数を返す
-    count_down(10)
+    if not 'room_token' in data:
+        print('room_tokenが渡されていません')
+        return 0
+
+    room_token = data['room_token']
+    
+
+    count_down(10, room_token)
+    
 
     # ゲーム開始
-    start.delay(30)
+    start.delay(30, room_token)
     
+
+def start(limit, room_token):
+    emit('start', {'data': 'ゲームスタート!'})
+    print('ゲームを開始しました')
+
+    count_down(limit, room_token)
+
     # カウント機能を配置
 
+def finish(my_count, enemy_count):
+    # User_Roomテーブルに追加 count
 
-def start(limit):
-    count_down.delay(limit)
+    # Matchテーブルの追加 winner_id is_finish, finish_time
 
-def send_message(count):
-    emit('')
+    # User_Dataテーブルの追加　全て
+    
+    emit('finish', {'your_count': my_count, 'enemy_count': enemy_count, 'winner': winner})
+
     
 @celery.task()
-def count_down(seconds):
-    for second in range(1, seconds):
+def count_down(seconds, room_token):
+    for second in range(seconds):
+        if second == seconds:
+            break
         time.sleep(1)
         print(seconds - second)
-        emit('count', {'count_down': seconds - second})
+        emit('count', {'count_down': seconds - second}, to=room_token)
 
 
 if __name__ == '__main__':

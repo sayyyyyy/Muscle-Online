@@ -67,20 +67,13 @@ const Modal=(props)=>{
                     
                 });
 
+                // サーバー側から返答があったときに発火する
+                // {'user_list': 現在ルームにいるユーザ一覧, 'room_token': ルームトークン}
                 socket.on('return', function(data) {
                     console.log(data);
                     console.log("ルームを作成しました");
                     navigate('/loading');
                 });
-
-                socket.on('count_display', function(count) {
-                    console.log(count);
-                });
-
-                socket.on('timer_display', function(timer) {
-                    console.log(timer);
-                });
-
             }
         }).catch(err=>{//ユーザー作成失敗
             console.log("registration res", err)
