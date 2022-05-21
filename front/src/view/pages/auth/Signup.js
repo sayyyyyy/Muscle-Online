@@ -32,7 +32,7 @@ const Signup= (props) => {
         console.log(res.data.data)
         if (res.data.code===1){
           console.log("ログイン成功しました")
-          console.log(res.data.data.token)
+          console.log(props.token)
           navigate('/home')
         }
         

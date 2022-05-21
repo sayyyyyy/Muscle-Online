@@ -6,6 +6,7 @@ from flask_jwt_extended import create_access_token, join_room, emit
 
 @socketio.on('join', namespace='/room')
 def join(data):
+    print(data)
     # ルームに入る側
     if data['room_token']:
         room_token = data['room_token']
@@ -60,6 +61,12 @@ def join(data):
 @socketio.on('leave')
 def leave_room(data):
     leave_room(data['room_token'])
+
+@socketio.on('connect_s')
+def connect(aa):
+    print(aa)
+    emit('return', {'aaa': 'aaa'})
+    return "aa"
 
 def send_message():
     pass
