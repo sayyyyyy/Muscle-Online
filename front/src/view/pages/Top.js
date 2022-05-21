@@ -1,26 +1,11 @@
-import Login from './auth/Signin'
-import Registration from './auth/Signup'
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import classes from './../../style/page/Top.module.css'
 
 const Top = (props) => {
-  const handleSuccessfulAuthentication=(data)=>{ //dataとはユーザーオブジェクト
-        props.handleLogin(data) //App.jsより
-        props.history.push("/dashboard")// /dashboardへ画面遷移させる処理
-  }
-
-  const handleLogoutClick=()=>{//ログアウト
-     axios.delete("http://localhost:5000/logout", { withCredentials: true })
-            .then(res => {
-                props.handleLogout()
-            }).catch(error => console.log("ログアウトエラー", error))
-    }
-
-    
-
+  
   return (
     <>
+    <div className={classes.box}>
       <div className={classes.backgroundStyle1}></div>
       <div className={classes.backgroundStyle2}></div>
       <div className={classes.containerStyle}>
@@ -34,8 +19,11 @@ const Top = (props) => {
         <br />
         <button className={classes.buttonStyle}> <Link to="/signin" className={classes.linkStyle}>ログイン</Link></button>
       </div>
-      {/* <div className={classes.backgroundStyle3}></div>
-      <div className={classes.backgroundStyle4}></div> */}
+      <div className={classes.container}>
+       <div className={classes.backgroundStyle3}></div>
+       <div className={classes.backgroundStyle4}></div> 
+      </div>
+      </div>
     </>
   );
 };

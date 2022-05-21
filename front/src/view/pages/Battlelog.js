@@ -1,12 +1,11 @@
 import Footer from "../components/Footer"
 import { useEffect,useState} from "react"
 import axios from "axios"
+import classes from "./../../style/page/Battlelog.module.css"
 
 const Battlelog=(props)=>{
 
     const [userlog,setUserlog]=useState([])
-
-
 
     useEffect(()=>{
         const gethistory=async()=>{
@@ -34,12 +33,19 @@ const Battlelog=(props)=>{
 
     return(
         <>
-            <h1>対戦履歴</h1>
-            <h1>
-                 {userlog.win}
-                 <br/ >
-                {userlog.lose}
-            </h1>
+            
+            <div className={classes.totalResult}>
+                <div>
+                    <p className={classes.t}>Win</p>
+                    <h1 className={classes.totalResultWinNum}>{userlog.win}</h1>
+                    <h1 className={classes.totalResultWinNum}>1</h1>
+                </div>
+                <div>
+                    <p>Lose</p>
+                    <h1>{userlog.lose}</h1>
+                    <h1 className={classes.totalResultWinNum}>0</h1>
+                </div>
+            </div>
             
             <Footer />
         </>
