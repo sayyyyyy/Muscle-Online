@@ -17,6 +17,7 @@ def create_room():
             return {'code': 0, 'data': {'states': 'tokenが渡されていません'}} 
 
         user = User.query.filter_by(token=data['user_token']).first()
+        print(data)
         if not user:
             return {'code': 0, 'data': {'states': 'ユーザが見つかりませんでした'}} 
 
@@ -84,8 +85,6 @@ def search_room():
 
         room_token = search_room.token
 
-        # ルームにこれ以上人が入らないようにデータを更新
-        search_room.is_open = 0
         db.session.commit()
 
         return {'code': 1, 'data': {'states': 'ルームが見つかりました', 'room_token': room_token}}
