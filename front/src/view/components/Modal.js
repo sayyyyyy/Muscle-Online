@@ -1,6 +1,8 @@
 import classes from "./../../style/components/Modal.module.css"
 import {useState} from "react"
 import axios from "axios"
+import { useNavigate } from 'react-router-dom';
+import socketIOClient from "socket.io-client";
 
 const Modal=(props)=>{
 
@@ -10,8 +12,10 @@ const Modal=(props)=>{
     const [roomPass,setRoomPass]=useState("")
     const [roomName,setRoomName]=useState("")
 
+    
+    const navigate=useNavigate()
 
-    //ルームの作成ボタン
+    //ルームの参加ボタン
     const joinRoomButton=(event)=>{ 
         axios.post("http://localhost:5001/search_room",
         {
@@ -21,7 +25,26 @@ const Modal=(props)=>{
         // { withCredentials: true } //cookieを含むか
         ).then(res=>{ //ユーザー作成成功
             console.log(res)
-           console.log("ルームに参加")
+            console.log("ルームに参加")
+            if (res.data.code===1){
+                const socket = socketIOClient('http://localhost:5001/room');
+                socket.on('connect', function() {
+                    console.log("ルームに参加")
+                    let room_token = res.data.data.room_token;
+                    let room_pass = roomPass;
+                    let user_token = props.token;
+                    if (room_pass){
+                        socket.emit('join', {'user_token': user_token, 'room_pass': room_pass});
+                        navigate('/loading')
+                    }
+                    else {
+                        socket.emit('join', {'user_token': user_token, 'room_token': room_token});
+                    }
+                    socket.on('return', function(data) {
+                        console.log(data);
+                    });
+                }) 
+            }
         }).catch(err=>{//ユーザー作成失敗
             console.log("registration res", err)
             console.log("ルームに参加することができませんでした")
@@ -39,10 +62,29 @@ const Modal=(props)=>{
         // { withCredentials: true } //cookieを含むか
         ).then(res=>{ //ユーザー作成成功
             console.log(res)
-           console.log("ルームに作成")
+            console.log("ルームに作成")
+            if (res.data.code===1){
+                const socket = socketIOClient('http://localhost:5001/room');
+                socket.on('connect', function() {
+                    console.log("ルームに参加")
+                    let room_token = res.data.data.room_token;
+                    let room_pass = roomPass;
+                    let user_token = props.token;
+                    if (room_pass){
+                        socket.emit('join', {'user_token': user_token, 'room_token': room_token});
+                        navigate('/loading')
+                    }
+                    else {
+                        socket.emit('join', {'user_token': user_token, 'room_pass': room_pass});
+                    }
+                    socket.on('return', function(data) {
+                        console.log(data);
+                    });
+                }) 
+            }
         }).catch(err=>{//ユーザー作成失敗
             console.log("registration res", err)
-             console.log("ルームを作成することができませんでした")
+            console.log("ルームを作成することができませんでした")
         })
         event.preventDefault()
     }

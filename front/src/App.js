@@ -11,7 +11,9 @@ import Home from "./view/pages/Home";
 import Battlelog from "./view/pages/Battlelog"
 import Mypage from "./view/pages/Mypage"
 import Loading from "./view/pages/Loading"
-
+import StartBattle from "./view/pages/StartBattle";
+import Battle from "./view/pages/Battle";
+import FinishBattle from "./view/pages/FinishBattle";
 
 
 const App = () => {
@@ -32,6 +34,9 @@ const App = () => {
               <Route path={`/battlelog`}  element={ <Battlelog token={token} /> }/>
               <Route path={`/mypage`}  element={ <Mypage token={token}  />} />
               <Route path={`/loading`}  element={ <Loading token={token}  />} />
+              <Route path={`/startbattle`}  element={ <StartBattle token={token}  />} />
+              <Route path={`/battle`}  element={ <Battle token={token}  />} />
+              <Route path={`/finishbattle`}  element={ <FinishBattle  token={token}  />} />
           </>
         )}
       </Routes>

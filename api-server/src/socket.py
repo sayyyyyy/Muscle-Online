@@ -30,6 +30,8 @@ def join(data):
         db.session.commit()
 
         join_room(access_token)
+
+
     # ルームを作る側
     else:
         if data['room_pass']:
