@@ -57,6 +57,7 @@ class User_Room(db.Model):
     user_room_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.room_id'), nullable=False)
+    isReady = db.Column(db.Boolean, default=False)
     count = db.Column(db.Integer, default=0)
 
 class User_RoomSchema(ma.Schema):
