@@ -1,3 +1,4 @@
+from urllib import request
 from flask import Flask
 from flask_cors import CORS
 from flask_socketio import SocketIO, join_room, emit
@@ -51,10 +52,13 @@ def count_down(seconds):
         time.sleep(1)
         print(seconds - second)
 
-@app.route('/test')
-def aaa():
-    count_down.delay(3)
-    return 'a'
+@app.route('/test', methods=['GET', 'POST'])
+def aaa(data):
+    if request.method == "POST":
+        print(data)
+    else:
+        print('get')
+    return data
 
 @socketio.on('join', namespace='/room')
 def join(data):
