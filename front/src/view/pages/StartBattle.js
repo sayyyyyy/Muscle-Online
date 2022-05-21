@@ -4,34 +4,34 @@ import classes from "./../../style/page/StartBattle.module.css"
 const StartBattle=()=>{
 
     const startBattleButton=(event)=>{
-        let socket = io.connect('http://localhost:5001/room');
-        const user_token = props.token
-        const room_token = props.room_token;
+        // let socket = io.connect('http://localhost:5001/room');
+        // const user_token = props.token
+        // const room_token = props.room_token;
 
-        // ボタンを準備OKに変更する
+        // // ボタンを準備OKに変更する
 
-        socket.emit('ready', {'user_token': user_token, 'room_token': room_token})
+        // socket.emit('ready', {'user_token': user_token, 'room_token': room_token})
     
-        // カウントダウンが進むたびに発火 1秒ごとに値が入ってくる
-        // {'count_down': 残り秒数}
+        // // カウントダウンが進むたびに発火 1秒ごとに値が入ってくる
+        // // {'count_down': 残り秒数}
 
-        socket.on('count', function(data) {
-            console.log(data);
-        });
+        // socket.on('count', function(data) {
+        //     console.log(data);
+        // });
 
-        // ゲームスタートするときに発火する
-        // {'data': 'ゲームスタート!'}
+        // // ゲームスタートするときに発火する
+        // // {'data': 'ゲームスタート!'}
 
-        socket.on('start', function(data) {
-            console.log(data);
-        });
+        // socket.on('start', function(data) {
+        //     console.log(data);
+        // });
 
-        // ゲームが終了した時に発火する　
-        // {'your_count': ユーザの回数, 'enemy_count': 相手の回数, 'winner': 勝者の名前})
+        // // ゲームが終了した時に発火する　
+        // // {'your_count': ユーザの回数, 'enemy_count': 相手の回数, 'winner': 勝者の名前})
         
-        socket.on('finish', function(data) {
-            console.log(data);
-        });
+        // socket.on('finish', function(data) {
+        //     console.log(data);
+        // });
     }
 
     return (

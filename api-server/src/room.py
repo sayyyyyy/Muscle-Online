@@ -2,7 +2,7 @@ from flask import Blueprint, session, request, redirect
 from flask_jwt_extended import create_access_token
 import random
 import string
-from models import Room, db, User_Room, Match, User
+from models import Room, db, User_Room, Match, User, GameInformation
 import datetime
 
 room_bp = Blueprint('room_bp', __name__)
@@ -13,7 +13,7 @@ def create_room():
 
         data = request.get_json()
         
-        if not data['user_token']:
+        if not 'user_token' in data:
             return {'code': 0, 'data': {'states': 'tokenが渡されていません'}} 
 
         user = User.query.filter_by(token=data['user_token']).first()
@@ -22,7 +22,7 @@ def create_room():
             return {'code': 0, 'data': {'states': 'ユーザが見つかりませんでした'}} 
 
 
-        if data['room_name']:
+        if 'room_name' in data:
             room_name = data['room_name']
         else:
             room_name = 'テスト部屋'
@@ -54,6 +54,11 @@ def create_room():
         access_token = create_access_token(room_pass)
         room.token = access_token
         db.session.commit()
+
+        # ゲーム選択処理を追加した場合
+        if 'game_id' in data and 'game_rule' in data:
+            game = GameInformation.query.filter_by(game=data['game_id'], game_rule_id=data['game_rule'])
+            # game.game_info_idをDBに追加する
 
         return {'code': 1, 'data': {'states': 'ルームを作成しました', 'room_token': access_token}}
     else:

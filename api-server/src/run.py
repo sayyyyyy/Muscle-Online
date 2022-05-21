@@ -5,8 +5,9 @@ from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager, create_access_token
 from make_celery import make_celery
 import time
+import datetime
 
-from models import db, User, Game, Room, User_Room, User_Data
+from models import db, User, Game, Room, User_Room, User_Data, Match
 from app import app_bp
 from user import user_bp
 from room import room_bp
@@ -124,21 +125,43 @@ def ready(data):
 
     if not 'user_token'in data:
         print('user_tokenが渡されていません')
+        return 0
 
+    user = User.query.filter_by(token=data['user_token']).first()
+    user_isReady = User_Room.query.filter_by(user_id=user.user_id).first()
+    user_isReady.isReady = not user_isReady.isReady
+    db.session.commit()
 
-    # 準備完了ボタンを押されてから10秒間残り秒数を返す
+    if user_isReady.isReady == 0:
+        print('あなたが準備完了できていません')
+        return 0
+
+    
     if not 'room_token' in data:
         print('room_tokenが渡されていません')
         return 0
 
     room_token = data['room_token']
-    
+    room = Room.query.filter_by(token=room_token).first()
 
+    if not room:
+        print('ルームが見つかりません')
+        return 0
+
+    users_rooms = User_Room.query.filter_by(room_id=room.room_id).all()
+    for user_room in users_rooms:
+        if user_room.isReady == 0:
+            print('相手が準備完了してません')
+            return 0
+
+    # 準備完了ボタンを押されてから10秒間残り秒数を返す
     count_down(10, room_token)
     
-
     # ゲーム開始
-    start.delay(30, room_token)
+    start(30, room_token)
+    
+    # (user_token, room_token, my_count, enemy_count, winner)
+    # finish()
     
 
 def start(limit, room_token):
@@ -148,14 +171,33 @@ def start(limit, room_token):
     count_down(limit, room_token)
 
     # カウント機能を配置
+    # func.delay()
 
-def finish(my_count, enemy_count):
-    # User_Roomテーブルに追加 count
+def finish(user_token, room_token, my_count, enemy_count, winner):
+    # User_Roomテーブルの更新 count
+    user = User.query.filter_by(token=user_token).first()
+    user_room = User_Room.query.filter_by(user_id=user.user_id).first()
+    user_room.count = my_count
 
-    # Matchテーブルの追加 winner_id is_finish, finish_time
+    # Matchテーブルの更新 winner_id is_finish, finish_time
+    room = Room.query.filter_by(token=room_token).first()
+    match = Match.query.filter_by(room_id=room.room_id).first()
+    match.winner_id = winner
+    match.is_finish = 1
+    match.finish_time = datetime.datetime.now()
 
-    # User_Dataテーブルの追加　全て
-    
+    # User_Dataテーブルの更新　全て
+    # TODO: 引き分けの処理をどうするか
+    user_data = User_Data.query.filter_by(user_id=user.user_id).first()
+    if user.user_id == winner:
+        user_data.num_of_win += 1
+    else:
+        user_data.num_of_lose += 1
+
+    user_data.num_of_match += 1 
+
+
+    db.session.commit()
     emit('finish', {'your_count': my_count, 'enemy_count': enemy_count, 'winner': winner})
 
     

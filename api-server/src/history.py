@@ -1,5 +1,6 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 import models
+import json
 
 history_bp = Blueprint('hisrory_bp', __name__)
 
@@ -27,27 +28,40 @@ def history():
         room_list = []
         for i in user_room:
             room = models.Room.query.filter_by(room_id = i.room_id).first()
-            room_list.qppend(room)
+            room_list.append(room.room_id)
 
         if not room_list:
             return {'code': 0, 'data': {'states': '対戦履歴がありません1'}}        
 
-        match_list = []
+        match_winner_list = []
+        match_gameinfo_list = []
         for i in room_list:
-            match = models.Match.query.filter_by(room_id = i.room_id)
-            match_list.append(match)
+            match = models.Match.query.filter_by(room_id = i).first()
+            if match.winner_id == user.user_id:
+                match_winner_list.append('win')
+            else:
+                match_winner_list.append('lose')
 
-        if not match_list:
-            return {'code': 0, 'data': {'states': '対戦履歴がありません2'}}      
+            gameinfo = models.GameInformation.query.filter_by(game_info_id=match.game_info_id).first()
+            match_gameinfo_list.append([gameinfo.game_format_id, gameinfo.game_rule])
+
+        if not match_winner_list:
+            return {'code': 0, 'data': {'states': '対戦履歴がありません2'}}
+
+
 
         return_data = {'match': user_data.num_of_match,
                         'win': user_data.num_of_win,
                         'lose': user_data.num_of_lose,
-                        'user_room': user_room,
-                        'room_list': room_list,
-                        'match_list': match_list}
+                        'match_history': {
+                            'room_list': room_list,
+                            'win_or_lose': match_winner_list,
+                            'gameinfo': match_gameinfo_list
+                        }
+                        }
 
-        # 一つ一つの試合結果 ゲーム情報と回数
+        # 直近50試合の試合結果(Match, winner) ゲーム情報(Match, gameinfo)と回数(User_Data, count)
+        # まずルーム情報を持ってくる　そのroom_idを元にmatch, user_roomの値を取得
         
 
         return {'code': 1, 'data': {'states': 'ユーザデータが見つかりました', 'user_data': return_data}}

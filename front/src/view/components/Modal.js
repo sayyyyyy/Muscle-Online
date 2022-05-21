@@ -33,10 +33,14 @@ const Modal=(props)=>{
                     console.log('aaa');
                 });
 
+                // サーバー側から返答があったときに発火する
+                // {'user_list': 現在ルームにいるユーザ一覧, 'room_token': ルームトークン}
                 socket.on('return', function(data) {
                     console.log(data);
                     console.log('ルームに参加しました');
                     navigate('/loading');
+
+                    // TODO: len(user_list)が2ならbattlestartに遷移させる
                 });
             }
         }).catch(err=>{//ユーザー作成失敗
@@ -65,6 +69,7 @@ const Modal=(props)=>{
 
                     socket.emit('join', {'user_token': user_token, 'room_token': room_token});
                     
+                    // TODO: len(user_list)が2ならbattlestartに遷移させる
                 });
 
                 // サーバー側から返答があったときに発火する
