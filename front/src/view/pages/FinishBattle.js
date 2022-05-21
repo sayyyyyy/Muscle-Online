@@ -1,11 +1,19 @@
 import { Link } from 'react-router-dom';
-
+import classes from "./../../style/page/FinishBattle.module.css"
 
 const FinishBattle=()=>{
     return (
         <>
-            <h1>対戦結果画面</h1>
-            <button><Link to="/home">戻る</Link></button>
+            <div className={classes.b}> 
+                <div className={classes.resultContainer}>
+                    <h1>Winner</h1>
+                    <h1>63<span>回</span></h1>
+                    <hr/>
+                    <h1>Looser</h1>
+                    <h1>32<span>回</span></h1>
+                </div>
+                <button className={classes.backButtonStyle}> <Link to="/home" className={classes.linkStyle}>戻る</Link></button>      
+            </div>
         </>
     )
 }
