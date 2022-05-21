@@ -14,15 +14,17 @@
     <script type="text/javascript" charset="utf-8">
         $('#button').click(function(){
             let socket = io.connect('http://localhost:5001/room');
-            socket.on('connect', function() {
-                let room_token = "";
-                let room_pass = "";
-                let user_token = "";
+            socket.on('connect', function(aaa) {
+                console.log('connect');                
+                let room_token = "aaa";
+                let room_pass = "aaa";
+                let user_token = "aaa";
                 if (room_pass){
                     socket.emit('join', {'user_token': user_token, 'room_pass': room_pass});
                 } else {
                     socket.emit('join', {'user_token': user_token, 'room_token': room_token});
                 }
+                console.log('connect finish');
             });
             
             // dataにカウントや秒数などのデータが入っている
@@ -30,6 +32,10 @@
                 console.log(data);
             });
 
+            socket.on('count', function(data) {
+                console.log('count');
+                console.log(data);
+            });
         })
 
     </script>
