@@ -54,9 +54,13 @@ def count_down(seconds):
 
 @app.route('/test', methods=['GET', 'POST'])
 def aaa():
+
     if request.method == "POST":
         data = request.get_json()
-        print(data)
+        #video = camera.encode_decode(data["data"])
+        camera.encode_decode(data['data'])
+        #PoseDetection.get_frame(data['data'])
+        
     else:
         print('get')
     return data
