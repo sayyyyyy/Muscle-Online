@@ -29,7 +29,6 @@ const Signup= (props) => {
     // { withCredentials: true } //cookieを含むか
     ).then(res=>{ //ユーザー作成成功
         props.setToken(res.data.data.token)
-        console.log(res.data.data)
         if (res.data.code===1){
           console.log("ログイン成功しました")
           console.log(props.token)

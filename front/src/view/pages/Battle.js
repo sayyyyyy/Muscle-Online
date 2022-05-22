@@ -56,18 +56,18 @@ const Battle=()=>{
     useEffect((event) => {
         setInterval(()=>{
             setImageSrc(webcamRef.current?.getScreenshot());
-            axios.post("http://localhost:5001/test",
-            {
-                data:imageSrc
-            },
-            // { withCredentials: true } //cookieを含むか
-            ).then(res=>{ //ユーザー作成成功
-                console.log("成功")
-                console.log(res)
-            }).catch(err=>{//ユーザー作成失敗
-                console.log("registration res", err)
-            })
-            event.preventDefault()
+             axios.post("http://localhost:5001/test",
+             {
+                 data:imageSrc
+             },
+             // { withCredentials: true } //cookieを含むか
+             ).then(res=>{ //ユーザー作成成功
+                 console.log("成功")
+                 console.log(res)
+             }).catch(err=>{//ユーザー作成失敗
+                 console.log("registration res", err)
+             })
+             event.preventDefault()
         },10000000);
     }, [imageSrc]);
 
@@ -86,16 +86,13 @@ const Battle=()=>{
                 </div>
                 <Webcam
                     audio={false}
-                    screenshotFormat="image/jpeg"
+                    screenshotFormat="image/png"
                     videoConstraints={videoConstraints}
                     ref={webcamRef}
                     className={classes.webcam}
                     width={width*0.75}
                     height={height*0.75}
                 />
-               
-            
-                
             </div>
             <br/>
                 <div>

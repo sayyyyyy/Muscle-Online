@@ -23,11 +23,11 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path={`/`} element={<Top />} />
-        <Route path={`/signup`} element={<Signup setToken={setToken}/>}/>
-        <Route path={`/signin`} element={<Signin setToken={setToken}/>}/>
+        <Route path={`/signup`} element={<Signup token={token} setToken={setToken}/>}/>
+        <Route path={`/signin`} element={<Signin token={token} setToken={setToken}/>}/>
      {/* トークンがない場合 */}
         {!token && token!=="" &&token!== undefined?  
-        <Route path={`/signin`} element={<Signin setToken={setToken}/>}/>
+        <Route path={`/signin`} element={<Signin token={token} setToken={setToken}/>}/>
         :(
           <>
               <Route path={`/home`}  element={ <Home  token={token} />}/>

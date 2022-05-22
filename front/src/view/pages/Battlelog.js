@@ -37,14 +37,14 @@ const Battlelog=(props)=>{
             <div className={classes.totalResult}>
                 <div className={classes.ResultBox}>
                     <p className={classes.totalResultText}>Win</p>
-                    {/* <h1 className={classes.totalResultNum}>{userlog.win}</h1> */}
-                    <h1 className={classes.totalResultNum}>0</h1>
+                     <h1 className={classes.totalResultNum}>{userlog.win}</h1> 
+                    
                 </div>
                 <div></div>
                 <div className={classes.ResultBox}>
                     <p className={classes.totalResultText}>Lose</p>
-                    {/* <h1 className={classes.totalResultNum}>{userlog.lose}</h1> */}
-                    <h1 className={classes.totalResultNum}>1</h1>
+                    <h1 className={classes.totalResultNum}>{userlog.lose}</h1> 
+                    
                 </div>
             </div>
 

@@ -159,12 +159,9 @@ def ready(data):
     
     # ゲーム開始
     start(30, room_token)
-<<<<<<< HEAD
-=======
     
     # (user_token, room_token, my_count, enemy_count, winner)
     # finish()
->>>>>>> develop
     
 
 def start(limit, room_token):
