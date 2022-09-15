@@ -1,9 +1,19 @@
 flask
+python-dotenv
 sqlalchemy
 flask-sqlalchemy
 pymysql
 flask-migrate
-flask-login
 flask-marshmallow
 marshmallow-sqlalchemy
-python-dotenv
+flask-cors
+flask-jwt-extended
+flask-socketio
+# eventlet
+opencv-python
+mediapipe
+numpy
+celery
+redis
+gevent
+gevent-websocket

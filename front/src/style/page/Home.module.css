@@ -1,0 +1,49 @@
+
+
+.button{
+    background-color: white;
+    width: 80%;
+    height:80%;
+    border: none;
+    margin-bottom: 20%;
+    margin-top: 30%;
+}
+.roomimg{
+    width: 100%;
+    height:100%;
+    float: left;
+}
+.ratebutton{
+    background-color: white;
+    width: 80%;
+    height:80%;
+    border: none;
+    float: right;
+    
+}
+.rateimg{
+    width: 100%;
+    height:100%;
+    float: right;
+}
+
+.backgroundStyle1{
+    padding:70px 10px;   /* buttom , left */
+    transform:skew(0deg, -15deg) ; 
+    background:#FFB851; 
+    margin-top:-100px
+   
+}
+.backgroundStyle2{
+    padding:55px 30px;   /* buttom , left */
+    transform:skew(0deg, -20deg); 
+    background: #FF4E00;
+    margin-top:-90px
+}
+.buttomimg{
+    width: 100%;
+    bottom:30px;
+    left:30px;
+    margin-top: 20vh;
+    bottom: 5.5%; 
+}

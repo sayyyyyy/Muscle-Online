@@ -5,7 +5,7 @@ services:
     container_name: api-server
     build: ./api-server/
     ports:
-      - 5000:5000
+      - 5001:5000
     links:
       - db
     volumes:
@@ -32,3 +32,20 @@ services:
     ports:
       - '3000:3000'
     tty: true
+  redis:
+    container_name: redis
+    image: redis:5.0.5
+    ports:
+      - '6379:6379'
+    hostname: redis
+  worker:
+    build: ./api-server
+    hostname: worker
+    entrypoint: celery
+    command: -A run.celery worker --loglevel=info
+    volumes:
+      - ./api-server/src:/project
+    links:
+      - redis
+    depends_on:
+      - redis

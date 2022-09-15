@@ -1,0 +1,93 @@
+.formStyle{
+   text-align: center;
+   justify-content: center;
+   width: 80%;
+   margin-left: auto;
+   margin-right: auto;
+   box-shadow: 0 0 4px gray;
+}
+
+.helloStyle{
+    color:#FFB851;
+    margin-top: 50%;
+    padding-top: 10%;
+}
+.titleStyle{
+    color:#F6B352;
+    font-size: 12px;
+    text-align: left;
+    margin-left: 10%;
+    margin-top: 10%;
+}
+.inputStyle{
+    border-bottom: 1px solid  #C4C4C4;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    width: 70%;
+}
+
+.submitButtonStyle{
+    margin-top: 20%;
+    margin-bottom: 20%;
+    width: 60%;
+    height: 40px;
+    border: none;
+    background-color: #F6B352;
+    font-weight: bold;
+    color: white;
+    font-size: 16px;
+}
+
+
+
+.backButtonStyle{
+    margin-top: 8%;
+    border: none;
+    border-radius: 6px;
+    background: #A7A7A7;
+    width:20%;
+    height: 30px;
+    justify-content: right;
+    margin-left: 70%;
+}
+
+.linkStyle{ 
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.backgroundStyle1{
+    padding:50px 10px;   /* buttom , left */
+    transform:skew(0deg, -15deg) ; 
+    background:#FF4E00; 
+    margin-top:-60px
+   
+}
+.backgroundStyle2{
+    padding:45px 30px;   /* buttom , left */
+    transform:skew(0deg, -20deg); 
+    background: #FFB851;
+    margin-top:-110px
+}
+.backgroundStyle3{
+    padding:30px 20%;   /* buttom , left */
+    transform:skew(0deg, -15deg) ; 
+    background:#FF4E00; 
+    margin-bottom:20px;
+    margin-top:16%;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+.backgroundStyle4{
+    padding:25% 100%;  /* buttom , left */
+    transform:skew(0deg, -24deg); 
+    background: #FFB851;
+    margin-top:50%;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

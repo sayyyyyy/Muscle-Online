@@ -1,3 +1,13 @@
+# Flaskのキャッシュ
 __pycache__
 
+# DBの環境変数
 db/Dockerfile
+
+# 環境変数
+.env
+
+# データベース作成時のmigrationファイル
+migrations
+
+node_modules

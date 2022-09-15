@@ -1,0 +1,69 @@
+.modalContent{
+    background-color: white;
+    padding: 10px;
+    border-radius: 3px;
+    height: 60%;
+    width: 80%;
+}
+
+.overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width:100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modalLink{
+    text-align: center;
+}
+.RoomButton{
+    border: none;
+    font-weight: bold;
+    color:#FFB851;
+    background-color:white;
+}
+
+.closeButton{
+    border: none;
+    font-weight: bold;
+    color:white;
+    background-color:#C4C4C4;
+    border-radius: 100%;
+    margin-left: 90%;
+    text-align: right;
+    display: block;
+    height: 30px;
+    width:30px;
+    text-align: center;
+    margin-bottom: 5%;
+    margin-top: 3%;
+}
+
+.hr{
+    border-top: 2px solid #F6B352;
+    margin-bottom: 20%;
+}
+/* ルーム参加画面 */
+.form{
+    text-align: center;
+}
+.inputStyle{
+    border-bottom: 1px solid  #C4C4C4;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    width: 70%;
+}
+.joinButton{
+    margin-top: 20%;
+    border: none;
+    width: 20%;
+    height: 10%;
+    background-color: #F6B352;
+    color: white;
+    font-weight: bold;
+}

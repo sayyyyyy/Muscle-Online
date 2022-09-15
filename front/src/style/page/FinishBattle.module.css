@@ -1,0 +1,38 @@
+.resultBackground{
+    text-align: center;
+    width: 100vw;
+    height: 100vh;
+    background: -moz-linear-gradient(top left, #FFB851, #FF4E00); 
+    background: -webkit-linear-gradient(top left, #FFB851, #FF4E00); 
+    background: linear-gradient(to bottom right, #FFB851, #FF4E00); 
+
+}
+
+.backButtonStyle{
+    margin-top: 8%;
+    border: none;
+    border-radius: 6px;
+    background: #A7A7A7;
+    width:20%;
+    height: 30px;
+    justify-content: right;
+    margin-left: 70%;
+    top: 100px;
+    left: 70%;
+}
+
+.linkStyle{ 
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+.resultContainer{
+    margin-top: 10%;
+    width: 70%;
+    height: 70%;
+    background-color: white;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 10px;
+}
